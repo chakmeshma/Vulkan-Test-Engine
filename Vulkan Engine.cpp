@@ -3324,3 +3324,18 @@ void VulkanEngine::destroyStagingMeans() {
 //
 //}
 
+float VulkanEngine::getElapsedTime()
+{
+	QueryPerformanceCounter(&t2);
+
+	LARGE_INTEGER elapsed;
+
+	elapsed.QuadPart = t2.QuadPart - t1.QuadPart;
+
+	t1 = t2;
+
+	elapsed.QuadPart *= 1000000;
+	elapsed.QuadPart /= frequency.QuadPart;
+
+	return float(elapsed.QuadPart);
+}

@@ -22,6 +22,7 @@ static int lastTranslationPosX = -1;
 static int lastTranslationPosY = -1;
 static float rotationSpeed = 10.0f;
 static float panSpeed = 1.0f;
+static float autoRotationSpeed = 0.0001f;
 
 void deleteEngineOrUnstableEngine() {
 	if (*pUnstableInstance != NULL)
@@ -179,10 +180,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //    fclose(file);
 //}
 
+void autoRotation() {
+	engine->focusYaw += autoRotationSpeed * engine->getElapsedTime();
+	VulkanEngine::calculateViewProjection(engine);
+}
+
 void renderLoop() {
 	while (!engine->terminating) {
 		if (engine->isInited())
+		{
+			autoRotation();
 			engine->draw();
+		}
 	}
 }
 

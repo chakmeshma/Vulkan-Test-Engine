@@ -56,7 +56,7 @@
 
 using namespace glm;
 
-typedef const C_STRUCT aiScene *FNP_aiImportFile(const char *, unsigned int);
+//typedef const C_STRUCT aiScene *FNP_aiImportFile(const char *, unsigned int);
 
 template<class T>
 struct Attribute {
@@ -128,6 +128,8 @@ public:
 			frameBufferAspectRatio, instance->zNear,
 			instance->zFar);
 	}
+
+	float getElapsedTime();
 
 	float focusPitch = 0.0f;
 	float focusYaw = 0.0f;

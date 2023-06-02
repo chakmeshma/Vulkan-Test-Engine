@@ -98,7 +98,7 @@ public:
 
 	bool terminating = false;
 
-	float focusDistance = -14.0f;
+	float focusDistance = -18.0f;
 
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};
@@ -416,8 +416,8 @@ private:
 
 	std::string resourcesPath = "Resources\\";
 	float fovAngle = (3.1415956536f / 180.0f) * 60.0f;
-	const float zNear = 0.1f;
-	const float zFar = 500.0f;
+	const float zNear = 1.0f;
+	const float zFar = 1000.0f;
 
 };
 

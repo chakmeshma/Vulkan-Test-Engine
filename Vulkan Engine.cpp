@@ -413,15 +413,15 @@ void VulkanEngine::createAllTextures() {
 
 		void *pTextureData = ilGetData();
 
-		for (int i = 0; i < 1024; i++) {
+		for (int i = 0; i < textureDim; i++) {
 			uint64_t rowPadding = -1;
 
-			rowPadding = subresourceLayout.rowPitch - ((4 * 1024) % subresourceLayout.rowPitch);
+			rowPadding = subresourceLayout.rowPitch - ((4 * textureDim) % subresourceLayout.rowPitch);
 
 			if (rowPadding == subresourceLayout.rowPitch) rowPadding = 0;
 
-			memcpy((byte *)mappedMemory + (i * (1024 * 4 + rowPadding)) + colorTexturesBindOffsetsDevice[meshIndex],
-				(byte *)pTextureData + (i * 1024 * 4), 1024 * 4);
+			memcpy((byte *)mappedMemory + (i * (textureDim * 4 + rowPadding)) + colorTexturesBindOffsetsDevice[meshIndex],
+				(byte *)pTextureData + (i * textureDim * 4), textureDim * 4);
 		}
 
 		ilDeleteImage(imgName);
@@ -448,15 +448,15 @@ void VulkanEngine::createAllTextures() {
 
 		pTextureData = ilGetData();
 
-		for (int i = 0; i < 1024; i++) {
+		for (int i = 0; i < textureDim; i++) {
 			uint64_t rowPadding = -1;
 
-			rowPadding = subresourceLayout.rowPitch - ((4 * 1024) % subresourceLayout.rowPitch);
+			rowPadding = subresourceLayout.rowPitch - ((4 * textureDim) % subresourceLayout.rowPitch);
 
 			if (rowPadding == subresourceLayout.rowPitch) rowPadding = 0;
 
-			memcpy((byte *)mappedMemory + (i * (1024 * 4 + rowPadding)) + normalTexturesBindOffsetsDevice[meshIndex],
-				(byte *)pTextureData + (i * 1024 * 4), 1024 * 4);
+			memcpy((byte *)mappedMemory + (i * (textureDim * 4 + rowPadding)) + normalTexturesBindOffsetsDevice[meshIndex],
+				(byte *)pTextureData + (i * textureDim * 4), textureDim * 4);
 		}
 
 		ilDeleteImage(imgName);
@@ -483,15 +483,15 @@ void VulkanEngine::createAllTextures() {
 
 		pTextureData = ilGetData();
 
-		for (int i = 0; i < 1024; i++) {
+		for (int i = 0; i < textureDim; i++) {
 			uint64_t rowPadding = -1;
 
-			rowPadding = subresourceLayout.rowPitch - ((4 * 1024) % subresourceLayout.rowPitch);
+			rowPadding = subresourceLayout.rowPitch - ((4 * textureDim) % subresourceLayout.rowPitch);
 
 			if (rowPadding == subresourceLayout.rowPitch) rowPadding = 0;
 
-			memcpy((byte *)mappedMemory + (i * (1024 * 4 + rowPadding)) + specTexturesBindOffsetsDevice[meshIndex],
-				(byte *)pTextureData + (i * 1024 * 4), 1024 * 4);
+			memcpy((byte *)mappedMemory + (i * (textureDim * 4 + rowPadding)) + specTexturesBindOffsetsDevice[meshIndex],
+				(byte *)pTextureData + (i * textureDim * 4), textureDim * 4);
 		}
 
 		ilDeleteImage(imgName);
@@ -2921,8 +2921,8 @@ VkMemoryRequirements VulkanEngine::createTexture(VkImage *textureImage, VkImageU
 	textureImageCreateInfo.flags = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
 	textureImageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
 	textureImageCreateInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
-	textureImageCreateInfo.extent.width = 1024;
-	textureImageCreateInfo.extent.height = 1024;
+	textureImageCreateInfo.extent.width = textureDim;
+	textureImageCreateInfo.extent.height = textureDim;
 	textureImageCreateInfo.extent.depth = 1;
 	textureImageCreateInfo.arrayLayers = 1;
 	textureImageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -3105,8 +3105,8 @@ void VulkanEngine::commitTextures() {
 		region.srcSubresource.layerCount = 1;
 		region.srcSubresource.mipLevel = 0;
 		region.extent.depth = 1;
-		region.extent.width = 1024;
-		region.extent.height = 1024;
+		region.extent.width = textureDim;
+		region.extent.height = textureDim;
 
 
 		vkCmdCopyImage(commandBuffer, colorTextureImages[meshIndex], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,

@@ -420,7 +420,7 @@ private:
 	float fovAngle = (3.1415956536f / 180.0f) * 60.0f;
 	const float zNear = 1.0f;
 	const float zFar = 1000.0f;
-
+	const uint16_t textureDim = 2048;
 };
 
 

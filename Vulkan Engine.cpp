@@ -168,7 +168,7 @@ void VulkanEngine::draw() {
 }
 
 void VulkanEngine::createInstance() {
-	appInfo.apiVersion = VK_API_VERSION_1_0;
+	appInfo.apiVersion = VK_API_VERSION_1_3;
 	appInfo.applicationVersion = VK_MAKE_VERSION(0, 1, 0);
 	appInfo.pApplicationName = "VulkanEngine Test";
 	appInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0);

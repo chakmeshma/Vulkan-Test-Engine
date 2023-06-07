@@ -23,6 +23,7 @@ static int lastTranslationPosY = -1;
 static float rotationSpeed = 10.0f;
 static float panSpeed = 1.0f;
 static float autoRotationSpeed = 0.0001f;
+static bool autoRotationEnabled = true;
 
 void deleteEngineOrUnstableEngine() {
 	if (*pUnstableInstance != NULL)
@@ -160,6 +161,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			VulkanEngine::calculateViewProjection(engine);
 		}
 		break;
+	case WM_KEYDOWN:
+		if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
+		if (autoRotationEnabled) engine->getElapsedTime();
+		break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
@@ -189,7 +194,7 @@ void renderLoop() {
 	while (!engine->terminating) {
 		if (engine->isInited())
 		{
-			autoRotation();
+			if(autoRotationEnabled) autoRotation();
 			engine->draw();
 		}
 	}

@@ -2602,28 +2602,28 @@ void VulkanEngine::render(uint32_t drawableImageIndex) {
 	}
 
 
-	vkCmdBindPipeline(renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+	//vkCmdBindPipeline(renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {
-		vkCmdPushConstants(renderCommandBuffer, graphicsPipelineLayout,
-			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
-			sizeof(ViewProjectionMatrices<float>),
-			&viewProjection);
-
-
-		vkCmdBindDescriptorSets(renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineLayout, 0, 1,
-			meshDescriptorSets + meshIndex, 0, nullptr);
+	//for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {
+	//	vkCmdPushConstants(renderCommandBuffer, graphicsPipelineLayout,
+	//		VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+	//		sizeof(ViewProjectionMatrices<float>),
+	//		&viewProjection);
 
 
-		VkDeviceSize offset = 0;
-
-		vkCmdBindVertexBuffers(renderCommandBuffer, 0, 1, vertexBuffersDevice + meshIndex, &offset);
-
-		vkCmdBindIndexBuffer(renderCommandBuffer, indexBuffersDevice[meshIndex], 0, VK_INDEX_TYPE_UINT32);
+	//	vkCmdBindDescriptorSets(renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineLayout, 0, 1,
+	//		meshDescriptorSets + meshIndex, 0, nullptr);
 
 
-		vkCmdDrawIndexed(renderCommandBuffer, static_cast<uint32_t>(sortedIndices[meshIndex].size()), 1, 0, 0, 0);
-	}
+	//	VkDeviceSize offset = 0;
+
+	//	vkCmdBindVertexBuffers(renderCommandBuffer, 0, 1, vertexBuffersDevice + meshIndex, &offset);
+
+	//	vkCmdBindIndexBuffer(renderCommandBuffer, indexBuffersDevice[meshIndex], 0, VK_INDEX_TYPE_UINT32);
+
+
+	//	vkCmdDrawIndexed(renderCommandBuffer, static_cast<uint32_t>(sortedIndices[meshIndex].size()), 1, 0, 0, 0);
+	//}
 
 	vkCmdEndRenderPass(renderCommandBuffer);
 

@@ -98,7 +98,7 @@ public:
 
 	bool terminating = false;
 
-	float focusDistance = -0.5f;
+	float focusDistance = -0.35f;
 
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};

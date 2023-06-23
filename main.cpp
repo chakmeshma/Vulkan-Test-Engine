@@ -7,9 +7,9 @@
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
-#define FULLSCREEN
-#define RESOLUTION_WIDTH 1024
-#define RESOLUTION_HEIGHT 768
+//#define FULLSCREEN
+#define RESOLUTION_WIDTH 500
+#define RESOLUTION_HEIGHT 1000
 #define APP_WINDOW_NAME Vulkan Test Nyra
 
 #define _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH() RESOLUTION_WIDTH

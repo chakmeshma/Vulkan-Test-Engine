@@ -614,6 +614,18 @@ void VulkanEngine::commitBuffers() {
 	vkFreeCommandBuffers(logicalDevices[0], transferCommandPool, 1, &commandBuffer);
 }
 
+int getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties) {
+	VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+	if (counts & VK_SAMPLE_COUNT_64_BIT) { return 64; }
+	if (counts & VK_SAMPLE_COUNT_32_BIT) { return 32; }
+	if (counts & VK_SAMPLE_COUNT_16_BIT) { return 16; }
+	if (counts & VK_SAMPLE_COUNT_8_BIT) { return 8; }
+	if (counts & VK_SAMPLE_COUNT_4_BIT) { return 4; }
+	if (counts & VK_SAMPLE_COUNT_2_BIT) { return 2; }
+
+	return 1;
+}
+
 void VulkanEngine::getPhysicalDevicePropertiesAndFeatures() {
 	vkGetPhysicalDeviceProperties(physicalDevices[0], &deviceProperties);
 
@@ -646,6 +658,11 @@ void VulkanEngine::getPhysicalDevicePropertiesAndFeatures() {
 	std::cout << "Maximum Texel Buffer elements: " << deviceProperties.limits.maxTexelBufferElements << std::endl;
 
 	std::cout << "Maximum Subpass Color Attachments: " << deviceProperties.limits.maxColorAttachments << std::endl;
+
+
+	int maxUsableSampleCount = getMaxUsableSampleCount(deviceProperties);
+
+	std::cout << "Maximum Framebuffer Sample Count: " << maxUsableSampleCount << std::endl;
 
 	std::cout << "Maximum Framebuffer Width: " << deviceProperties.limits.maxFramebufferWidth << std::endl;
 

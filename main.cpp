@@ -8,6 +8,21 @@
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
 #define FULLSCREEN
+#define RESOLUTION_WIDTH 1024
+#define RESOLUTION_HEIGHT 768
+#define APP_WINDOW_NAME Vulkan Test Nyra
+
+#define _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH() RESOLUTION_WIDTH
+#define _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT() RESOLUTION_HEIGHT
+#define _MAKE_WINDOW_NAME_GET_NAME() APP_WINDOW_NAME
+#ifdef FULLSCREEN
+#define _MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_GET_NAME()\x20 Fullscreen
+#else
+#define _MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_GET_NAME()\x20 _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH()\x78 _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT()
+#endif
+#define __MAKE_WINDOW_NAME_STRINGIFY(x) #x
+#define _MAKE_WINDOW_NAME_STRINGIFY(x) __MAKE_WINDOW_NAME_STRINGIFY(x)
+#define MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_STRINGIFY(_MAKE_WINDOW_NAME())
 
 
 static bool vulkanInited = false;
@@ -23,7 +38,7 @@ static int lastTranslationPosY = -1;
 static float rotationSpeed = 10.0f;
 static float panSpeed = 1.0f;
 static float autoRotationSpeed = 0.0001f;
-static bool autoRotationEnabled = true;
+static bool autoRotationEnabled = false;
 
 void deleteEngineOrUnstableEngine() {
 	if (*pUnstableInstance != NULL)
@@ -101,70 +116,70 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		PostQuitMessage(0);
 		quitMessagePosted = true;
 		break;
-	case WM_MOUSEWHEEL:
-		wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		engine->focusDistance += float(wheelDelta) / 100.0f;
-		VulkanEngine::calculateViewProjection(engine);
-		break;
-	case WM_MBUTTONDOWN:
-		lastTranslationPosX = -1;
-		lastTranslationPosY = -1;
-		break;
-	case WM_LBUTTONDOWN:
-		lastRotationPosX = -1;
-		lastRotationPosY = -1;
-		break;
-	case WM_MOUSELEAVE:
-		lastRotationPosX = -1;
-		lastRotationPosY = -1;
-		lastTranslationPosX = -1;
-		lastTranslationPosY = -1;
-		break;
-	case WM_MOUSEMOVE:
-		if ((wParam & MK_LBUTTON) != 0) {
-			int xPos = GET_X_LPARAM(lParam);
-			int yPos = GET_Y_LPARAM(lParam);
-			if (lastRotationPosX == -1 || lastRotationPosY == -1) {
-				lastRotationPosX = xPos;
-				lastRotationPosY = yPos;
-			}
-			int deltaX = xPos - lastRotationPosX;
-			int deltaY = yPos - lastRotationPosY;
+	//case WM_MOUSEWHEEL:
+	//	wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+	//	engine->focusDistance += float(wheelDelta) / 100.0f;
+	//	VulkanEngine::calculateViewProjection(engine);
+	//	break;
+	//case WM_MBUTTONDOWN:
+	//	lastTranslationPosX = -1;
+	//	lastTranslationPosY = -1;
+	//	break;
+	//case WM_LBUTTONDOWN:
+	//	lastRotationPosX = -1;
+	//	lastRotationPosY = -1;
+	//	break;
+	//case WM_MOUSELEAVE:
+	//	lastRotationPosX = -1;
+	//	lastRotationPosY = -1;
+	//	lastTranslationPosX = -1;
+	//	lastTranslationPosY = -1;
+	//	break;
+	//case WM_MOUSEMOVE:
+	//	if ((wParam & MK_LBUTTON) != 0) {
+	//		int xPos = GET_X_LPARAM(lParam);
+	//		int yPos = GET_Y_LPARAM(lParam);
+	//		if (lastRotationPosX == -1 || lastRotationPosY == -1) {
+	//			lastRotationPosX = xPos;
+	//			lastRotationPosY = yPos;
+	//		}
+	//		int deltaX = xPos - lastRotationPosX;
+	//		int deltaY = yPos - lastRotationPosY;
 
-			lastRotationPosX = xPos;
-			lastRotationPosY = yPos;
+	//		lastRotationPosX = xPos;
+	//		lastRotationPosY = yPos;
 
-			engine->focusYaw -= float(deltaX) / 400.0f * rotationSpeed;
-			engine->focusPitch += float(deltaY) / 400.0f * rotationSpeed;
+	//		engine->focusYaw -= float(deltaX) / 400.0f * rotationSpeed;
+	//		engine->focusPitch += float(deltaY) / 400.0f * rotationSpeed;
 
-			engine->focusPitch = std::max(-89.9f, std::min(engine->focusPitch, 89.9f));
+	//		engine->focusPitch = std::max(-89.9f, std::min(engine->focusPitch, 89.9f));
 
-			VulkanEngine::calculateViewProjection(engine);
-		}
-		else if ((wParam & MK_MBUTTON) != 0) {
-			int xPos = GET_X_LPARAM(lParam);
-			int yPos = GET_Y_LPARAM(lParam);
-			if (lastTranslationPosX == -1 || lastTranslationPosY == -1) {
-				lastTranslationPosX = xPos;
-				lastTranslationPosY = yPos;
-			}
-			int deltaX = xPos - lastTranslationPosX;
-			int deltaY = yPos - lastTranslationPosY;
+	//		VulkanEngine::calculateViewProjection(engine);
+	//	}
+	//	else if ((wParam & MK_MBUTTON) != 0) {
+	//		int xPos = GET_X_LPARAM(lParam);
+	//		int yPos = GET_Y_LPARAM(lParam);
+	//		if (lastTranslationPosX == -1 || lastTranslationPosY == -1) {
+	//			lastTranslationPosX = xPos;
+	//			lastTranslationPosY = yPos;
+	//		}
+	//		int deltaX = xPos - lastTranslationPosX;
+	//		int deltaY = yPos - lastTranslationPosY;
 
-			lastTranslationPosX = xPos;
-			lastTranslationPosY = yPos;
+	//		lastTranslationPosX = xPos;
+	//		lastTranslationPosY = yPos;
 
 
-			engine->focusPointX -= float(deltaX) / 1000.0f * panSpeed;
-			engine->focusPointY -= float(deltaY) / 1000.0f * panSpeed;
+	//		engine->focusPointX -= float(deltaX) / 1000.0f * panSpeed;
+	//		engine->focusPointY -= float(deltaY) / 1000.0f * panSpeed;
 
-			VulkanEngine::calculateViewProjection(engine);
-		}
-		break;
-	case WM_KEYDOWN:
-		if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
-		if (autoRotationEnabled) engine->getElapsedTime();
-		break;
+	//		VulkanEngine::calculateViewProjection(engine);
+	//	}
+	//	break;
+	//case WM_KEYDOWN:
+	//	if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
+	//	if (autoRotationEnabled) engine->getElapsedTime();
+	//	break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
@@ -224,9 +239,9 @@ void initWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 		throw std::exception();
 
 	windowHandle = CreateWindowEx(
-		WS_EX_TOPMOST,
+		0,
 		g_szClassName,
-		"VulkanEngine Test",
+		MAKE_WINDOW_NAME(),
 		WS_POPUP,
 		0, 0, 1920, 1080,
 		NULL, NULL, hInstance, NULL);
@@ -264,9 +279,9 @@ void initWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 	windowHandle = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
 		g_szClassName,
-		"Vulkan Test",
+		MAKE_WINDOW_NAME(),
 		WS_OVERLAPPEDWINDOW ^ (WS_THICKFRAME | WS_MAXIMIZEBOX),
-		CW_USEDEFAULT, CW_USEDEFAULT, 1100, 1000,
+		CW_USEDEFAULT, CW_USEDEFAULT, RESOLUTION_WIDTH + 20, RESOLUTION_HEIGHT + 43,
 		NULL, NULL, hInstance, NULL);
 
 	ShowWindow(windowHandle, nCmdShow);

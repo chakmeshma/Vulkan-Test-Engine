@@ -98,7 +98,7 @@ public:
 
 	bool terminating = false;
 
-	float focusDistance = -18.0f;
+	float focusDistance = -0.5f;
 
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};
@@ -111,7 +111,7 @@ public:
 		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(instance->focusYaw), glm::vec3(0.0f, 1.0f, 0.0f));
 		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(instance->focusPitch), glm::vec3(1.0f, 0.0f, 0.0f));
 
-		glm::vec4 cameraPosition = rotationMatrix * glm::vec4(0.0, 0.0, -instance->focusDistance, 1.0);
+		glm::vec4 cameraPosition = /*rotationMatrix **/ glm::vec4(0.0, 0.0, -instance->focusDistance, 1.0);
 
 		glm::vec3 focusPoint(instance->focusPointX, instance->focusPointY, instance->focusPointZ);
 
@@ -417,9 +417,9 @@ private:
 	//VkPipeline graphicsDebugPipeline;
 
 	std::string resourcesPath = "Resources\\";
-	float fovAngle = (3.1415956536f / 180.0f) * 60.0f;
-	const float zNear = 1.0f;
-	const float zFar = 1000.0f;
+	float fovAngle = 60.0f;
+	const float zNear = 0.1f;
+	const float zFar = 1.0f;
 	const uint16_t textureDim = 2048;
 };
 

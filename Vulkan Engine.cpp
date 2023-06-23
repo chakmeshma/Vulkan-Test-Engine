@@ -84,7 +84,7 @@ void VulkanEngine::init() {
 	createSyncMeans();
 	getDeviceExtensions();
 	getDeviceLayers();
-	loadMesh("nyra.obj");
+	loadMesh("nyra.fbx");
 	createAllTextures();
 	createAllBuffers();
 	getQueues();
@@ -2846,8 +2846,7 @@ void VulkanEngine::loadMesh(const char *fileName) {
 	meshPath.append(fileName);
 
 	const aiScene *scene = aiImportFile(meshPath.c_str(),
-		aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals |
-		aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace);
+		aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	memcpy(cachedScene, scene, sizeof(aiScene));
 
 	std::cout << "Number of Meshes reported from Assimp: " << cachedScene->mNumMeshes << std::endl;

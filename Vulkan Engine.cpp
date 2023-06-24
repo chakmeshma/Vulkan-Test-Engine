@@ -84,7 +84,7 @@ void VulkanEngine::init() {
 	createSyncMeans();
 	getDeviceExtensions();
 	getDeviceLayers();
-	loadMesh("nyra.fbx");
+	loadMesh("mesh");
 	createAllTextures();
 	createAllBuffers();
 	getQueues();
@@ -168,10 +168,10 @@ void VulkanEngine::draw() {
 }
 
 void VulkanEngine::createInstance() {
-	appInfo.apiVersion = VK_API_VERSION_1_3;
-	appInfo.applicationVersion = VK_MAKE_VERSION(0, 1, 0);
+	appInfo.apiVersion = VK_API_VERSION_1_0;
+	appInfo.applicationVersion = 0;
 	appInfo.pApplicationName = "VulkanEngine Test";
-	appInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0);
+	appInfo.engineVersion = 0;
 	appInfo.pEngineName = "VulkanEngine Engine";
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pNext = nullptr;
@@ -1950,7 +1950,7 @@ void VulkanEngine::createSwapchain() {
 		surfaceSupportedPresentModes) != VK_SUCCESS) {
 		throw VulkanException("Couldn't get surface supported presentation modes.");
 	}
-	surfacePresentMode = surfaceSupportedPresentModes[0]; // Selecing the first supported present mode
+	surfacePresentMode = (verticalSyncEnabled) ? (VK_PRESENT_MODE_FIFO_KHR) : (VK_PRESENT_MODE_IMMEDIATE_KHR);
 
 	if (surfaceSupportedPresentModesCount == -1)
 		throw VulkanException("Couldn't find IMMEDIATE present mode in supported present modes.");
@@ -2026,7 +2026,7 @@ uint32_t VulkanEngine::acquireNextFramebufferImageIndex() {
 
 	vkDeviceWaitIdle(logicalDevices[0]);
 
-	VkResult acquireNextImageIndexResult = vkAcquireNextImageKHR(logicalDevices[0], swapchain, 0,
+	VkResult acquireNextImageIndexResult = vkAcquireNextImageKHR(logicalDevices[0], swapchain, UINT64_MAX,
 		indexAcquiredSemaphore, VK_NULL_HANDLE, &imageIndex);
 
 	//vkDestroyFence(logicalDevices[0], *pAcquireNextImageIndexFence, nullptr);

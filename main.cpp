@@ -7,7 +7,7 @@
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
-//#define FULLSCREEN
+#define FULLSCREEN
 #define WINDOW_RESOLUTION_WIDTH 500
 #define WINDOW_RESOLUTION_HEIGHT 1000
 #define APP_WINDOW_NAME Vulkan Test Nyra
@@ -206,19 +206,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //    fclose(file);
 //}
 
-void autoRotation() {
-	static float cameraRotationValue = 0.0f;
+void autoRotation(VulkanEngine* engine) {
+	engine->cameraRotationValue += autoRotationSpeed * engine->getElapsedTime();
 
-	cameraRotationValue += autoRotationSpeed * engine->getElapsedTime();
-
-	VulkanEngine::calculateViewProjection(engine, cameraRotationValue);
+	VulkanEngine::calculateViewProjection(engine);
 }
 
 void renderLoop() {
 	while (!engine->terminating) {
 		if (engine->isInited())
 		{
-			if (autoRotationEnabled) autoRotation();
+			if (autoRotationEnabled) autoRotation(engine);
 			engine->draw();
 		}
 	}

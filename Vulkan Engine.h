@@ -100,11 +100,13 @@ public:
 
 	float cameraDistance = -0.35f;
 
+	float cameraRotationValue = 0.0f;
+
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};
 
 
-	static void calculateViewProjection(VulkanEngine* instance, float cameratRotationValue = 0.0f) {
+	static void calculateViewProjection(VulkanEngine* instance) {
 
 		mat4x4 rotationMatrix = glm::mat4(1.0f);
 
@@ -120,7 +122,7 @@ public:
 
 		static const glm::vec3 cameraRotationAxis(.0f, 1.0f, .0f);
 
-		instance->viewProjection.viewMatrix = glm::rotate(instance->viewProjection.viewMatrix, cameratRotationValue, cameraRotationAxis);
+		instance->viewProjection.viewMatrix = glm::rotate(instance->viewProjection.viewMatrix, instance->cameraRotationValue, cameraRotationAxis);
 
 
 		float frameBufferAspectRatio =
@@ -425,6 +427,7 @@ private:
 	const float zNear = 0.1f;
 	const float zFar = 1.0f;
 	const uint16_t textureDim = 2048;
+	const bool verticalSyncEnabled = true;
 };
 
 

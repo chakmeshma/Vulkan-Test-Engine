@@ -2378,22 +2378,63 @@ void VulkanEngine::createGraphicsPipeline() {
 //typedef shaderc_compiler_t (*_shaderc_compiler_initialize_t)();
 //typedef shaderc_compile_into_spv
 
+void writeShaderBinaryToFile(const void* shaderBinary, size_t shaderBinarySize, const char* fileName)
+{
+	FILE* fp;
+	fp = fopen(fileName, "wb");
+	assert(fp);
+
+	fwrite(shaderBinary, 1, shaderBinarySize, fp);
+
+	fclose(fp);
+}
+
+size_t readShaderBinaryFromFile(void*& shaderBinary, const char* fileName) {
+	size_t readSize = 0;
+
+	FILE* fp;
+	fp = fopen(fileName, "rb");
+	assert(fp);
+
+	fseek(fp, 0L, SEEK_END);
+	readSize = ftell(fp);
+	rewind(fp);
+
+	shaderBinary = new char[readSize];
+
+	fread(shaderBinary, 1, readSize, fp);
+
+	fclose(fp);
+
+	return readSize;
+}
+
+//#define COMPILE_SHADER
+
 void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShaderModule* shaderModule,
 	shaderc_shader_kind shaderType) {
 
 
 	std::string shaderPath(resourcesPath);
 	shaderPath.append(shaderFileName);
+	std::string compiledShaderFileName(shaderFileName);
+	compiledShaderFileName.append(".compiled");
 
+#ifdef COMPILE_SHADER
 	std::string shaderCode = loadShaderCode(shaderPath.c_str());
+	std::vector<uint32_t> shaderBinaryVector = compileGLSLShader(shaderCode.c_str(), shaderType);
+	writeShaderBinaryToFile(reinterpret_cast<const void*>(shaderBinaryVector.data()), shaderBinaryVector.size() * sizeof(uint32_t), compiledShaderFileName.c_str());
+#endif
+	void* shaderBinary = nullptr;
+	size_t shaderBinaryAbsoluteSize = 0;
 
-	std::vector<uint32_t> shaderBinary = compileGLSLShader(shaderCode.c_str(), shaderType);
+	shaderBinaryAbsoluteSize = readShaderBinaryFromFile(shaderBinary, compiledShaderFileName.c_str());
 
 	shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	shaderModuleCreateInfo.pNext = nullptr;
-	shaderModuleCreateInfo.codeSize = shaderBinary.size() * sizeof(uint32_t);
+	shaderModuleCreateInfo.codeSize = shaderBinaryAbsoluteSize;
 	shaderModuleCreateInfo.flags = 0;
-	shaderModuleCreateInfo.pCode = shaderBinary.data();
+	shaderModuleCreateInfo.pCode = reinterpret_cast<uint32_t*>(shaderBinary);
 
 	if (vkCreateShaderModule(logicalDevices[0], &shaderModuleCreateInfo, nullptr, shaderModule) ==
 		VK_SUCCESS) {
@@ -2872,7 +2913,7 @@ void VulkanEngine::loadMesh(const char* fileName) {
 		throw VulkanException("Couldn't load obj file: ");
 	}
 	else {
-		std::cout << "OBj File Loaded successfully." << std::endl;
+		std::cout << "Mesh File Loaded successfully." << std::endl;
 	}
 
 	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {

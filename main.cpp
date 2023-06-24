@@ -37,6 +37,7 @@ static int lastTranslationPosX = -1;
 static int lastTranslationPosY = -1;
 static float rotationSpeed = 10.0f;
 static float panSpeed = 1.0f;
+static float wheelZoomSpeed = .0001f;
 static float autoRotationSpeed = 0.000001f;
 static bool autoRotationEnabled = true;
 
@@ -89,6 +90,7 @@ bool initVulkan(HINSTANCE hInstance, HWND windowHandle) {
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	short wheelDelta = 0;
+	float appliedWheelData = 1.0f;
 
 	switch (msg) {
 	case WM_SHOWWINDOW:
@@ -116,11 +118,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		PostQuitMessage(0);
 		quitMessagePosted = true;
 		break;
-		//case WM_MOUSEWHEEL:
-		//	wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		//	engine->focusDistance += float(wheelDelta) / 100.0f;
-		//	VulkanEngine::calculateViewProjection(engine);
-		//	break;
+	case WM_MOUSEWHEEL:
+		wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+		appliedWheelData = 1.0f - float(wheelDelta) * wheelZoomSpeed;
+
+		engine->cameraDistance *= appliedWheelData;
+
+		VulkanEngine::calculateViewProjection(engine);
+		break;
 		//case WM_MBUTTONDOWN:
 		//	lastTranslationPosX = -1;
 		//	lastTranslationPosY = -1;

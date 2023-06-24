@@ -98,7 +98,7 @@ public:
 
 	bool terminating = false;
 
-	float focusDistance = -0.35f;
+	float cameraDistance = -0.35f;
 
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};
@@ -111,7 +111,7 @@ public:
 		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(instance->focusYaw), glm::vec3(0.0f, 1.0f, 0.0f));
 		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(instance->focusPitch), glm::vec3(1.0f, 0.0f, 0.0f));
 
-		glm::vec4 cameraPosition = /*rotationMatrix **/ glm::vec4(0.0, 0.0, -instance->focusDistance, 1.0);
+		glm::vec4 cameraPosition = /*rotationMatrix **/ glm::vec4(0.0, 0.0, -instance->cameraDistance, 1.0);
 
 		glm::vec3 focusPoint(instance->focusPointX, instance->focusPointY, instance->focusPointZ);
 

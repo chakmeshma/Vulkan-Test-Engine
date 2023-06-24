@@ -26,10 +26,10 @@
 
 
 static bool vulkanInited = false;
-static VulkanEngine *engine = NULL;
+static VulkanEngine* engine = NULL;
 static const char g_szClassName[] = "Vulkan Test Window Class";
 static HWND windowHandle = NULL;
-static VulkanEngine **pUnstableInstance = new VulkanEngine *;
+static VulkanEngine** pUnstableInstance = new VulkanEngine*;
 static bool quitMessagePosted = false;
 static int lastRotationPosX = -1;
 static int lastRotationPosY = -1;
@@ -42,7 +42,7 @@ static bool autoRotationEnabled = true;
 
 void deleteEngineOrUnstableEngine() {
 	if (*pUnstableInstance != NULL)
-		delete *pUnstableInstance;
+		delete* pUnstableInstance;
 	else
 		delete engine;
 }
@@ -74,7 +74,7 @@ bool initVulkanReal(HINSTANCE hInstance, HWND windowHandle) {
 
 		getchar();
 
-		delete *pUnstableInstance;
+		delete* pUnstableInstance;
 
 		return false;
 	}
@@ -116,66 +116,66 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		PostQuitMessage(0);
 		quitMessagePosted = true;
 		break;
-	//case WM_MOUSEWHEEL:
-	//	wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-	//	engine->focusDistance += float(wheelDelta) / 100.0f;
-	//	VulkanEngine::calculateViewProjection(engine);
-	//	break;
-	//case WM_MBUTTONDOWN:
-	//	lastTranslationPosX = -1;
-	//	lastTranslationPosY = -1;
-	//	break;
-	//case WM_LBUTTONDOWN:
-	//	lastRotationPosX = -1;
-	//	lastRotationPosY = -1;
-	//	break;
-	//case WM_MOUSELEAVE:
-	//	lastRotationPosX = -1;
-	//	lastRotationPosY = -1;
-	//	lastTranslationPosX = -1;
-	//	lastTranslationPosY = -1;
-	//	break;
-	//case WM_MOUSEMOVE:
-	//	if ((wParam & MK_LBUTTON) != 0) {
-	//		int xPos = GET_X_LPARAM(lParam);
-	//		int yPos = GET_Y_LPARAM(lParam);
-	//		if (lastRotationPosX == -1 || lastRotationPosY == -1) {
-	//			lastRotationPosX = xPos;
-	//			lastRotationPosY = yPos;
-	//		}
-	//		int deltaX = xPos - lastRotationPosX;
-	//		int deltaY = yPos - lastRotationPosY;
+		//case WM_MOUSEWHEEL:
+		//	wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		//	engine->focusDistance += float(wheelDelta) / 100.0f;
+		//	VulkanEngine::calculateViewProjection(engine);
+		//	break;
+		//case WM_MBUTTONDOWN:
+		//	lastTranslationPosX = -1;
+		//	lastTranslationPosY = -1;
+		//	break;
+		//case WM_LBUTTONDOWN:
+		//	lastRotationPosX = -1;
+		//	lastRotationPosY = -1;
+		//	break;
+		//case WM_MOUSELEAVE:
+		//	lastRotationPosX = -1;
+		//	lastRotationPosY = -1;
+		//	lastTranslationPosX = -1;
+		//	lastTranslationPosY = -1;
+		//	break;
+		//case WM_MOUSEMOVE:
+		//	if ((wParam & MK_LBUTTON) != 0) {
+		//		int xPos = GET_X_LPARAM(lParam);
+		//		int yPos = GET_Y_LPARAM(lParam);
+		//		if (lastRotationPosX == -1 || lastRotationPosY == -1) {
+		//			lastRotationPosX = xPos;
+		//			lastRotationPosY = yPos;
+		//		}
+		//		int deltaX = xPos - lastRotationPosX;
+		//		int deltaY = yPos - lastRotationPosY;
 
-	//		lastRotationPosX = xPos;
-	//		lastRotationPosY = yPos;
+		//		lastRotationPosX = xPos;
+		//		lastRotationPosY = yPos;
 
-	//		engine->focusYaw -= float(deltaX) / 400.0f * rotationSpeed;
-	//		engine->focusPitch += float(deltaY) / 400.0f * rotationSpeed;
+		//		engine->focusYaw -= float(deltaX) / 400.0f * rotationSpeed;
+		//		engine->focusPitch += float(deltaY) / 400.0f * rotationSpeed;
 
-	//		engine->focusPitch = std::max(-89.9f, std::min(engine->focusPitch, 89.9f));
+		//		engine->focusPitch = std::max(-89.9f, std::min(engine->focusPitch, 89.9f));
 
-	//		VulkanEngine::calculateViewProjection(engine);
-	//	}
-	//	else if ((wParam & MK_MBUTTON) != 0) {
-	//		int xPos = GET_X_LPARAM(lParam);
-	//		int yPos = GET_Y_LPARAM(lParam);
-	//		if (lastTranslationPosX == -1 || lastTranslationPosY == -1) {
-	//			lastTranslationPosX = xPos;
-	//			lastTranslationPosY = yPos;
-	//		}
-	//		int deltaX = xPos - lastTranslationPosX;
-	//		int deltaY = yPos - lastTranslationPosY;
+		//		VulkanEngine::calculateViewProjection(engine);
+		//	}
+		//	else if ((wParam & MK_MBUTTON) != 0) {
+		//		int xPos = GET_X_LPARAM(lParam);
+		//		int yPos = GET_Y_LPARAM(lParam);
+		//		if (lastTranslationPosX == -1 || lastTranslationPosY == -1) {
+		//			lastTranslationPosX = xPos;
+		//			lastTranslationPosY = yPos;
+		//		}
+		//		int deltaX = xPos - lastTranslationPosX;
+		//		int deltaY = yPos - lastTranslationPosY;
 
-	//		lastTranslationPosX = xPos;
-	//		lastTranslationPosY = yPos;
+		//		lastTranslationPosX = xPos;
+		//		lastTranslationPosY = yPos;
 
 
-	//		engine->focusPointX -= float(deltaX) / 1000.0f * panSpeed;
-	//		engine->focusPointY -= float(deltaY) / 1000.0f * panSpeed;
+		//		engine->focusPointX -= float(deltaX) / 1000.0f * panSpeed;
+		//		engine->focusPointY -= float(deltaY) / 1000.0f * panSpeed;
 
-	//		VulkanEngine::calculateViewProjection(engine);
-	//	}
-	//	break;
+		//		VulkanEngine::calculateViewProjection(engine);
+		//	}
+		//	break;
 	case WM_KEYDOWN:
 		if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
 		if (autoRotationEnabled) engine->getElapsedTime();
@@ -212,7 +212,7 @@ void renderLoop() {
 	while (!engine->terminating) {
 		if (engine->isInited())
 		{
-			if(autoRotationEnabled) autoRotation();
+			if (autoRotationEnabled) autoRotation();
 			engine->draw();
 		}
 	}
@@ -320,7 +320,7 @@ int main() {
 
 	//Consequently, The first WM_SHOWWINDOW message starts the VulkanEngine initialization.
 	//initWindow(GetModuleHandle(NULL), NULL, "", 1);
-	initWindow(GetModuleHandle(NULL), NULL, (LPSTR) "", 1);
+	initWindow(GetModuleHandle(NULL), NULL, (LPSTR)"", 1);
 
 	return EXIT_SUCCESS;
 }

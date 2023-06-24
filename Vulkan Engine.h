@@ -82,7 +82,7 @@ struct ViewProjectionMatrices {
 class VulkanEngine {
 public:
 
-	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine **ppUnstableInstance);
+	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance);
 
 	~VulkanEngine() noexcept(false);
 
@@ -199,11 +199,11 @@ private:
 	VkDeviceSize memoryCommittedBytesCount = 0;
 	VkMappedMemoryRange memoryFlushRange = {};
 	VkMemoryRequirements imageMemoryRequirements = {};
-	VkImage *sparseImages;
-	VkSparseImageMemoryRequirements *sparseImageMemoryRequirements;
+	VkImage* sparseImages;
+	VkSparseImageMemoryRequirements* sparseImageMemoryRequirements;
 	uint32_t sparseMemoryRequirementsCount = 0;
 	VkImageCreateInfo sparseImageCreateInfo = {};
-	VkSparseImageFormatProperties *physicalDeviceSparseImageFormatProperties;
+	VkSparseImageFormatProperties* physicalDeviceSparseImageFormatProperties;
 	uint32_t physicalDeviceSparseImageFormatPropertiesCount = 0;
 	VkQueue graphicsQueue;
 	VkQueue transferQueue;
@@ -216,13 +216,13 @@ private:
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	VkBool32 physicalDeviceSurfaceSupported = VK_FALSE;
 	uint32_t surfaceSupportedFormatsCount = 0;
-	VkSurfaceFormatKHR *surfaceSupportedFormats;
+	VkSurfaceFormatKHR* surfaceSupportedFormats;
 	uint32_t surfaceSupportedPresentModesCount = 0;
-	VkPresentModeKHR *surfaceSupportedPresentModes;
+	VkPresentModeKHR* surfaceSupportedPresentModes;
 	VkPresentModeKHR surfacePresentMode;
 	uint32_t swapchainImagesCount = 0;
-	VkImage *swapchainImages;
-	VkImageView *swapchainImageViews;
+	VkImage* swapchainImages;
+	VkImageView* swapchainImageViews;
 	VkPresentInfoKHR presentInfo = {};
 	VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
 	VkShaderModule computeShaderModule = {};
@@ -242,7 +242,7 @@ private:
 	VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {};
 	VkRenderPassCreateInfo renderPassCreateInfo = {};
 	VkRenderPass renderPass = {};
-	VkFramebuffer *framebuffers;
+	VkFramebuffer* framebuffers;
 	VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {};
 	VkShaderModule graphicsVertexShaderModule;
 	//VkShaderModule graphicsGeometryShaderModule;
@@ -290,19 +290,19 @@ private:
 	VkBuffer uniformBuffers[MAX_UNIFORM_BUFFER_ARRAY_SIZE];
 	VkBuffer vertexBuffers[MAX_VERTEX_BUFFER_ARRAY_SIZE];
 	VkBuffer indexBuffers[MAX_INDEX_BUFFER_ARRAY_SIZE];
-	VkDeviceSize *colorTexturesBindOffsetsDevice;
-	VkDeviceSize *normalTexturesBindOffsetsDevice;
-	VkDeviceSize *specTexturesBindOffsetsDevice;
-	VkDeviceSize *colorTexturesBindOffsets;
-	VkDeviceSize *normalTexturesBindOffsets;
-	VkDeviceSize *specTexturesBindOffsets;
-	VkDeviceSize *uniformBuffersBindOffsetsDevice;
-	VkDeviceSize *vertexBuffersBindOffsetsDevice;
-	VkDeviceSize *indexBuffersBindOffsetsDevice;
-	VkDeviceSize *uniformBuffersBindOffsets;
-	VkDeviceSize *vertexBuffersBindOffsets;
-	VkDeviceSize *indexBuffersBindOffsets;
-	aiScene *cachedScene = NULL;
+	VkDeviceSize* colorTexturesBindOffsetsDevice;
+	VkDeviceSize* normalTexturesBindOffsetsDevice;
+	VkDeviceSize* specTexturesBindOffsetsDevice;
+	VkDeviceSize* colorTexturesBindOffsets;
+	VkDeviceSize* normalTexturesBindOffsets;
+	VkDeviceSize* specTexturesBindOffsets;
+	VkDeviceSize* uniformBuffersBindOffsetsDevice;
+	VkDeviceSize* vertexBuffersBindOffsetsDevice;
+	VkDeviceSize* indexBuffersBindOffsetsDevice;
+	VkDeviceSize* uniformBuffersBindOffsets;
+	VkDeviceSize* vertexBuffersBindOffsets;
+	VkDeviceSize* indexBuffersBindOffsets;
+	aiScene* cachedScene = NULL;
 	VkDescriptorSet meshDescriptorSets[MAX_MESHES];
 	VkSampler textureSampler;
 	VkFence queueDoneFence;
@@ -361,7 +361,7 @@ private:
 
 	void createFramebuffers();
 
-	void createGraphicsShaderModule(const char *shaderFileName, VkShaderModule *shaderModule,
+	void createGraphicsShaderModule(const char* shaderFileName, VkShaderModule* shaderModule,
 		shaderc_shader_kind shaderType);
 
 	//    void createFragmentGraphicsShaderModule();
@@ -386,16 +386,16 @@ private:
 
 	void createDescriptorSets();
 
-	void loadMesh(const char *fileName);
+	void loadMesh(const char* fileName);
 
 	/*void writeBuffers();*/
-	VkMemoryRequirements createBuffer(VkBuffer *buffer, VkDeviceSize size, VkBufferUsageFlags usageFlags);
+	VkMemoryRequirements createBuffer(VkBuffer* buffer, VkDeviceSize size, VkBufferUsageFlags usageFlags);
 
 	void getSupportedDepthFormat();
 
-	VkMemoryRequirements createTexture(VkImage *textureImage, VkImageUsageFlags usageFlags);
+	VkMemoryRequirements createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags);
 
-	void createTextureView(VkImageView *textureImageView, VkImage textureImage);
+	void createTextureView(VkImageView* textureImageView, VkImage textureImage);
 
 	void createAllTextures();
 
@@ -411,7 +411,7 @@ private:
 
 	void destroyStagingMeans();
 
-	std::string loadShaderCode(const char *fileName);
+	std::string loadShaderCode(const char* fileName);
 
 	//void createGraphicsNormalViewerPipeline();
 

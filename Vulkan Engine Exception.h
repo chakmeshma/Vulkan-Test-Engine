@@ -11,9 +11,9 @@
 
 struct VulkanException : public std::exception {
 public:
-	explicit VulkanException(char const *const _Message);
+	explicit VulkanException(char const* const _Message);
 
-	virtual const char *what() const noexcept override;
+	virtual const char* what() const noexcept override;
 
 private:
 	std::string msg;

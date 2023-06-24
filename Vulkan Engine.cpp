@@ -9,9 +9,9 @@
 
 
 
-VulkanEngine **ppUnstableInstance_img = NULL;
+VulkanEngine** ppUnstableInstance_img = NULL;
 
-VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine **ppUnstableInstance) {
+VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance) {
 	*ppUnstableInstance = this;
 	ppUnstableInstance_img = ppUnstableInstance;
 
@@ -145,7 +145,7 @@ void VulkanEngine::getSupportedDepthFormat() {
 			VK_FORMAT_D16_UNORM
 	};
 
-	for (auto &format : depthFormats) {
+	for (auto& format : depthFormats) {
 		VkFormatProperties formatProps;
 		vkGetPhysicalDeviceFormatProperties(physicalDevices[0], format, &formatProps);
 		// Format must support depth stencil attachment for optimal tiling
@@ -176,8 +176,8 @@ void VulkanEngine::createInstance() {
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pNext = nullptr;
 
-	std::vector<const char *> layerNames = { "VK_LAYER_LUNARG_monitor", "VK_LAYER_LUNARG_standard_validation" };
-	std::vector<const char *> extensionNames = { "VK_KHR_surface", "VK_KHR_win32_surface" };
+	std::vector<const char*> layerNames = { "VK_LAYER_LUNARG_monitor", "VK_LAYER_LUNARG_standard_validation" };
+	std::vector<const char*> extensionNames = { "VK_KHR_surface", "VK_KHR_win32_surface" };
 
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceCreateInfo.pNext = nullptr;
@@ -381,7 +381,7 @@ void VulkanEngine::createAllTextures() {
 
 	VKASSERT_SUCCESS(vkAllocateMemory(logicalDevices[0], &uniMemoryAllocateInfo, nullptr, &uniTexturesMemory));
 
-	void *mappedMemory = NULL;
+	void* mappedMemory = NULL;
 
 	VKASSERT_SUCCESS(vkMapMemory(logicalDevices[0], uniTexturesMemory, 0, VK_WHOLE_SIZE, 0, &mappedMemory));
 
@@ -411,7 +411,7 @@ void VulkanEngine::createAllTextures() {
 		if (ilLoadImage(colorFileName.c_str()) != IL_TRUE)
 			std::cerr << "DevIL: Couldn't load texture file '" << colorFileName.c_str() << "'." << std::endl;
 
-		void *pTextureData = ilGetData();
+		void* pTextureData = ilGetData();
 
 		for (int i = 0; i < textureDim; i++) {
 			uint64_t rowPadding = -1;
@@ -420,8 +420,8 @@ void VulkanEngine::createAllTextures() {
 
 			if (rowPadding == subresourceLayout.rowPitch) rowPadding = 0;
 
-			memcpy((byte *)mappedMemory + (i * (textureDim * 4 + rowPadding)) + colorTexturesBindOffsetsDevice[meshIndex],
-				(byte *)pTextureData + (i * textureDim * 4), textureDim * 4);
+			memcpy((byte*)mappedMemory + (i * (textureDim * 4 + rowPadding)) + colorTexturesBindOffsetsDevice[meshIndex],
+				(byte*)pTextureData + (i * textureDim * 4), textureDim * 4);
 		}
 
 		ilDeleteImage(imgName);
@@ -455,8 +455,8 @@ void VulkanEngine::createAllTextures() {
 
 			if (rowPadding == subresourceLayout.rowPitch) rowPadding = 0;
 
-			memcpy((byte *)mappedMemory + (i * (textureDim * 4 + rowPadding)) + normalTexturesBindOffsetsDevice[meshIndex],
-				(byte *)pTextureData + (i * textureDim * 4), textureDim * 4);
+			memcpy((byte*)mappedMemory + (i * (textureDim * 4 + rowPadding)) + normalTexturesBindOffsetsDevice[meshIndex],
+				(byte*)pTextureData + (i * textureDim * 4), textureDim * 4);
 		}
 
 		ilDeleteImage(imgName);
@@ -490,8 +490,8 @@ void VulkanEngine::createAllTextures() {
 
 			if (rowPadding == subresourceLayout.rowPitch) rowPadding = 0;
 
-			memcpy((byte *)mappedMemory + (i * (textureDim * 4 + rowPadding)) + specTexturesBindOffsetsDevice[meshIndex],
-				(byte *)pTextureData + (i * textureDim * 4), textureDim * 4);
+			memcpy((byte*)mappedMemory + (i * (textureDim * 4 + rowPadding)) + specTexturesBindOffsetsDevice[meshIndex],
+				(byte*)pTextureData + (i * textureDim * 4), textureDim * 4);
 		}
 
 		ilDeleteImage(imgName);
@@ -960,7 +960,7 @@ void VulkanEngine::createLogicalDevice() {
 	deviceQueueCreateInfos[0].pNext = nullptr;
 	deviceQueueCreateInfos[0].queueFamilyIndex = graphicsQueueFamilyIndex;
 	deviceQueueCreateInfos[0].queueCount = graphicsQueueFamilyNumQueue;
-	float *graphicsQueuePriorities = new float[graphicsQueueFamilyNumQueue];
+	float* graphicsQueuePriorities = new float[graphicsQueueFamilyNumQueue];
 
 	for (uint32_t i = 0; i < graphicsQueueFamilyNumQueue; i++)
 		graphicsQueuePriorities[i] = (i == 1) ? (1.0f) : (0.0f);
@@ -973,7 +973,7 @@ void VulkanEngine::createLogicalDevice() {
 	deviceQueueCreateInfos[1].pNext = nullptr;
 	deviceQueueCreateInfos[1].queueFamilyIndex = transferQueueFamilyIndex;
 	deviceQueueCreateInfos[1].queueCount = transferQueueFamilyNumQueue;
-	float *transferQueuePriorities = new float[transferQueueFamilyNumQueue];
+	float* transferQueuePriorities = new float[transferQueueFamilyNumQueue];
 
 	for (uint32_t i = 0; i < transferQueueFamilyNumQueue; i++)
 		transferQueuePriorities[i] = (i == 1) ? (1.0f) : (0.0f);
@@ -981,7 +981,7 @@ void VulkanEngine::createLogicalDevice() {
 	deviceQueueCreateInfos[1].pQueuePriorities = transferQueuePriorities;
 
 
-	std::vector<const char *> extensionNames = { "VK_KHR_swapchain" };
+	std::vector<const char*> extensionNames = { "VK_KHR_swapchain" };
 
 	desiredDeviceFeatures.geometryShader = VK_FALSE;
 
@@ -1172,14 +1172,14 @@ void VulkanEngine::createAllBuffers() {
 
 	VKASSERT_SUCCESS(vkAllocateMemory(logicalDevices[0], &uniMemoryAllocateInfo, nullptr, &uniBuffersMemoryDevice));
 
-	void *mappedMemory = NULL;
+	void* mappedMemory = NULL;
 
 	VKASSERT_SUCCESS(vkMapMemory(logicalDevices[0], uniBuffersMemory, 0, VK_WHOLE_SIZE, 0, &mappedMemory));
 
 	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {
 		modelMatrix.modelMatrix = glm::mat4x4(1.0f);
 
-		memcpy((byte *)mappedMemory + uniformBuffersBindOffsetsDevice[meshIndex], &modelMatrix,
+		memcpy((byte*)mappedMemory + uniformBuffersBindOffsetsDevice[meshIndex], &modelMatrix,
 			totalUniformBufferSize);
 
 		memoryFlushRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
@@ -1190,7 +1190,7 @@ void VulkanEngine::createAllBuffers() {
 
 		VKASSERT_SUCCESS(vkFlushMappedMemoryRanges(logicalDevices[0], 1, &memoryFlushRange));
 
-		memcpy((byte *)mappedMemory + vertexBuffersBindOffsetsDevice[meshIndex], sortedAttributes[meshIndex].data(),
+		memcpy((byte*)mappedMemory + vertexBuffersBindOffsetsDevice[meshIndex], sortedAttributes[meshIndex].data(),
 			vertexBuffersSizes[meshIndex]);
 
 		memoryFlushRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
@@ -1201,7 +1201,7 @@ void VulkanEngine::createAllBuffers() {
 
 		VKASSERT_SUCCESS(vkFlushMappedMemoryRanges(logicalDevices[0], 1, &memoryFlushRange));
 
-		memcpy((byte *)mappedMemory + indexBuffersBindOffsetsDevice[meshIndex], sortedIndices[meshIndex].data(),
+		memcpy((byte*)mappedMemory + indexBuffersBindOffsetsDevice[meshIndex], sortedIndices[meshIndex].data(),
 			indexBuffersSizes[meshIndex]);
 
 		memoryFlushRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
@@ -2378,7 +2378,7 @@ void VulkanEngine::createGraphicsPipeline() {
 //typedef shaderc_compiler_t (*_shaderc_compiler_initialize_t)();
 //typedef shaderc_compile_into_spv
 
-void VulkanEngine::createGraphicsShaderModule(const char *shaderFileName, VkShaderModule *shaderModule,
+void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShaderModule* shaderModule,
 	shaderc_shader_kind shaderType) {
 
 
@@ -2404,7 +2404,7 @@ void VulkanEngine::createGraphicsShaderModule(const char *shaderFileName, VkShad
 
 }
 
-std::string VulkanEngine::loadShaderCode(const char *fileName) {
+std::string VulkanEngine::loadShaderCode(const char* fileName) {
 	std::string line;
 	std::string code = "";
 	std::ifstream infile;
@@ -2846,7 +2846,7 @@ void VulkanEngine::createDescriptorSets() {
 	}
 }
 
-void VulkanEngine::loadMesh(const char *fileName) {
+void VulkanEngine::loadMesh(const char* fileName) {
 	std::string err;
 
 	//HMODULE assimpModule = LoadLibrary("assimp-vc140-mt.dll");
@@ -2856,13 +2856,13 @@ void VulkanEngine::loadMesh(const char *fileName) {
 
 	FNP_aiImportFile *_aiImportFile = (FNP_aiImportFile *)GetProcAddress(assimpModule, "aiImportFile");*/
 
-	cachedScene = (aiScene *)malloc(sizeof(aiScene));
+	cachedScene = (aiScene*)malloc(sizeof(aiScene));
 
 	std::string meshPath(resourcesPath);
 
 	meshPath.append(fileName);
 
-	const aiScene *scene = aiImportFile(meshPath.c_str(),
+	const aiScene* scene = aiImportFile(meshPath.c_str(),
 		aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	memcpy(cachedScene, scene, sizeof(aiScene));
 
@@ -2884,23 +2884,23 @@ void VulkanEngine::loadMesh(const char *fileName) {
 		for (uint32_t i = 0; i < numVertices; i++) {
 
 			Attribute<float> tmpAttribute = {};
-			memcpy(((byte *)&tmpAttribute) + offsetof(Attribute<float>, position),
-				&((aiVector3D *)(cachedScene->mMeshes[meshIndex]->mVertices))[i].x, 3 * sizeof(float));
-			memcpy(((byte *)&tmpAttribute) + offsetof(Attribute<float>, normal),
-				&((aiVector3D *)(cachedScene->mMeshes[meshIndex]->mNormals))[i].x, 3 * sizeof(float));
-			memcpy(((byte *)&tmpAttribute) + offsetof(Attribute<float>, uv),
-				&((aiVector3D *)(cachedScene->mMeshes[meshIndex]->mTextureCoords[0]))[i].x, 2 * sizeof(float));
-			memcpy(((byte *)&tmpAttribute) + offsetof(Attribute<float>, tangent),
-				&((aiVector3D *)(cachedScene->mMeshes[meshIndex]->mTangents))[i].x, 3 * sizeof(float));
-			memcpy(((byte *)&tmpAttribute) + offsetof(Attribute<float>, bitangent),
-				&((aiVector3D *)(cachedScene->mMeshes[meshIndex]->mBitangents))[i].x, 3 * sizeof(float));
+			memcpy(((byte*)&tmpAttribute) + offsetof(Attribute<float>, position),
+				&((aiVector3D*)(cachedScene->mMeshes[meshIndex]->mVertices))[i].x, 3 * sizeof(float));
+			memcpy(((byte*)&tmpAttribute) + offsetof(Attribute<float>, normal),
+				&((aiVector3D*)(cachedScene->mMeshes[meshIndex]->mNormals))[i].x, 3 * sizeof(float));
+			memcpy(((byte*)&tmpAttribute) + offsetof(Attribute<float>, uv),
+				&((aiVector3D*)(cachedScene->mMeshes[meshIndex]->mTextureCoords[0]))[i].x, 2 * sizeof(float));
+			memcpy(((byte*)&tmpAttribute) + offsetof(Attribute<float>, tangent),
+				&((aiVector3D*)(cachedScene->mMeshes[meshIndex]->mTangents))[i].x, 3 * sizeof(float));
+			memcpy(((byte*)&tmpAttribute) + offsetof(Attribute<float>, bitangent),
+				&((aiVector3D*)(cachedScene->mMeshes[meshIndex]->mBitangents))[i].x, 3 * sizeof(float));
 
 			sortedAttributes[meshIndex].push_back(tmpAttribute);
 		}
 
 		for (uint32_t i = 0; i < numFaces; i++) {
-			for (unsigned int j = 0; j < ((aiFace *)(cachedScene->mMeshes[meshIndex]->mFaces))[i].mNumIndices; j++) {
-				uint32_t index = ((unsigned int *)(((aiFace *)(cachedScene->mMeshes[meshIndex]->mFaces))[i].mIndices))[j];
+			for (unsigned int j = 0; j < ((aiFace*)(cachedScene->mMeshes[meshIndex]->mFaces))[i].mNumIndices; j++) {
+				uint32_t index = ((unsigned int*)(((aiFace*)(cachedScene->mMeshes[meshIndex]->mFaces))[i].mIndices))[j];
 				sortedIndices[meshIndex].push_back(index);
 			}
 		}
@@ -2910,7 +2910,7 @@ void VulkanEngine::loadMesh(const char *fileName) {
 	}
 }
 
-VkMemoryRequirements VulkanEngine::createBuffer(VkBuffer *buffer, VkDeviceSize size, VkBufferUsageFlags usageFlags) {
+VkMemoryRequirements VulkanEngine::createBuffer(VkBuffer* buffer, VkDeviceSize size, VkBufferUsageFlags usageFlags) {
 	VkBufferCreateInfo bufferCreateInfo = {};
 
 	bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -2929,7 +2929,7 @@ VkMemoryRequirements VulkanEngine::createBuffer(VkBuffer *buffer, VkDeviceSize s
 	return uniformBufferMemoryRequirements;
 }
 
-VkMemoryRequirements VulkanEngine::createTexture(VkImage *textureImage, VkImageUsageFlags usageFlags) {
+VkMemoryRequirements VulkanEngine::createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags) {
 	VkImageCreateInfo textureImageCreateInfo = {};
 
 	textureImageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -2959,7 +2959,7 @@ VkMemoryRequirements VulkanEngine::createTexture(VkImage *textureImage, VkImageU
 	return textureImageMemoryRequirements;
 }
 
-void VulkanEngine::createTextureView(VkImageView *textureImageView, VkImage textureImage) {
+void VulkanEngine::createTextureView(VkImageView* textureImageView, VkImage textureImage) {
 	VkImageViewCreateInfo textureImageViewCreateInfo = {};
 
 	textureImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

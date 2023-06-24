@@ -26,9 +26,9 @@
 #include "shaderc_online_compiler.h"
 
 // Returns GLSL shader source text after preprocessing.
-std::string preprocess_shader(const std::string &source_name,
+std::string preprocess_shader(const std::string& source_name,
 	shaderc_shader_kind kind,
-	const std::string &source) {
+	const std::string& source) {
 	shaderc::Compiler compiler;
 	shaderc::CompileOptions options;
 
@@ -48,9 +48,9 @@ std::string preprocess_shader(const std::string &source_name,
 
 // Compiles a shader to SPIR-V assembly. Returns the assembly text
 // as a string.
-std::string compile_file_to_assembly(const std::string &source_name,
+std::string compile_file_to_assembly(const std::string& source_name,
 	shaderc_shader_kind kind,
-	const std::string &source,
+	const std::string& source,
 	bool optimize = false) {
 	shaderc::Compiler compiler;
 	shaderc::CompileOptions options;
@@ -72,9 +72,9 @@ std::string compile_file_to_assembly(const std::string &source_name,
 
 // Compiles a shader to a SPIR-V binary. Returns the binary as
 // a vector of 32-bit words.
-std::vector<uint32_t> compile_file(const std::string &source_name,
+std::vector<uint32_t> compile_file(const std::string& source_name,
 	shaderc_shader_kind kind,
-	const std::string &source,
+	const std::string& source,
 	bool optimize = false) {
 	shaderc::Compiler compiler;
 	shaderc::CompileOptions options;

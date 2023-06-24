@@ -104,7 +104,7 @@ public:
 	ModelMatrix<float> modelMatrix = {};
 
 
-	static void calculateViewProjection(VulkanEngine *instance) {
+	static void calculateViewProjection(VulkanEngine* instance, float cameratRotationValue = 0.0f) {
 
 		mat4x4 rotationMatrix = glm::mat4(1.0f);
 
@@ -117,6 +117,10 @@ public:
 
 		instance->viewProjection.viewMatrix = glm::lookAt(glm::vec3(cameraPosition), focusPoint,
 			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		static const glm::vec3 cameraRotationAxis(.0f, 1.0f, .0f);
+
+		instance->viewProjection.viewMatrix = glm::rotate(instance->viewProjection.viewMatrix, cameratRotationValue, cameraRotationAxis);
 
 
 		float frameBufferAspectRatio =

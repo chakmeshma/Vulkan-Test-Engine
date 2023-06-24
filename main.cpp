@@ -37,8 +37,8 @@ static int lastTranslationPosX = -1;
 static int lastTranslationPosY = -1;
 static float rotationSpeed = 10.0f;
 static float panSpeed = 1.0f;
-static float autoRotationSpeed = 0.0001f;
-static bool autoRotationEnabled = false;
+static float autoRotationSpeed = 0.000001f;
+static bool autoRotationEnabled = true;
 
 void deleteEngineOrUnstableEngine() {
 	if (*pUnstableInstance != NULL)
@@ -176,10 +176,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	//		VulkanEngine::calculateViewProjection(engine);
 	//	}
 	//	break;
-	//case WM_KEYDOWN:
-	//	if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
-	//	if (autoRotationEnabled) engine->getElapsedTime();
-	//	break;
+	case WM_KEYDOWN:
+		if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
+		if (autoRotationEnabled) engine->getElapsedTime();
+		break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
@@ -201,8 +201,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //}
 
 void autoRotation() {
-	engine->focusYaw += autoRotationSpeed * engine->getElapsedTime();
-	VulkanEngine::calculateViewProjection(engine);
+	static float cameraRotationValue = 0.0f;
+
+	cameraRotationValue += autoRotationSpeed * engine->getElapsedTime();
+
+	VulkanEngine::calculateViewProjection(engine, cameraRotationValue);
 }
 
 void renderLoop() {

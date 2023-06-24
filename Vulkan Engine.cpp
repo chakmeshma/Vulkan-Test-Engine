@@ -709,16 +709,25 @@ void VulkanEngine::getPhysicalDevicePropertiesAndFeatures() {
 
 	std::string flagsString;
 
+	size_t lastSelectedHostVisibleMemoryTypeHeapSize = 0;
+	size_t lastSelectedDeviceLocalMemoryTypeHeapSize = 0;
+
 	for (uint32_t i = 0; i < deviceMemoryProperties.memoryTypeCount; i++) {
 		flagsString = "";
 
 		int heapIndex = deviceMemoryProperties.memoryTypes[i].heapIndex;
 
-		if ((deviceMemoryProperties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0)
+		if ((deviceMemoryProperties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) && \
+			deviceMemoryProperties.memoryHeaps[heapIndex].size > lastSelectedHostVisibleMemoryTypeHeapSize) {
 			hostVisibleMemoryTypeIndex = i;
+			lastSelectedHostVisibleMemoryTypeHeapSize = deviceMemoryProperties.memoryHeaps[heapIndex].size;
+		}
 
-		if ((deviceMemoryProperties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0)
+		if ((deviceMemoryProperties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) && \
+			deviceMemoryProperties.memoryHeaps[heapIndex].size > lastSelectedDeviceLocalMemoryTypeHeapSize) {
 			deviceLocalMemoryTypeIndex = i;
+			lastSelectedDeviceLocalMemoryTypeHeapSize = deviceMemoryProperties.memoryHeaps[heapIndex].size;
+		}
 
 		if ((deviceMemoryProperties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0) {
 			flagsString += "DEVICE_LOCAL ";
@@ -2409,6 +2418,17 @@ size_t readShaderBinaryFromFile(void*& shaderBinary, const char* fileName) {
 	return readSize;
 }
 
+bool checkFileExist(const char* fileName) {
+	FILE* fp = fopen(fileName, "r");
+	bool is_exist = false;
+	if (fp != NULL)
+	{
+		is_exist = true;
+		fclose(fp); // close the file
+	}
+	return is_exist;
+}
+
 //#define COMPILE_SHADER
 
 void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShaderModule* shaderModule,
@@ -2420,11 +2440,14 @@ void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShad
 	std::string compiledShaderFileName(shaderFileName);
 	compiledShaderFileName.append(".compiled");
 
-#ifdef COMPILE_SHADER
-	std::string shaderCode = loadShaderCode(shaderPath.c_str());
-	std::vector<uint32_t> shaderBinaryVector = compileGLSLShader(shaderCode.c_str(), shaderType);
-	writeShaderBinaryToFile(reinterpret_cast<const void*>(shaderBinaryVector.data()), shaderBinaryVector.size() * sizeof(uint32_t), compiledShaderFileName.c_str());
-#endif
+	bool compileShader = !checkFileExist(compiledShaderFileName.c_str());
+
+	if (compileShader) {
+		std::string shaderCode = loadShaderCode(shaderPath.c_str());
+		std::vector<uint32_t> shaderBinaryVector = compileGLSLShader(shaderCode.c_str(), shaderType);
+		writeShaderBinaryToFile(reinterpret_cast<const void*>(shaderBinaryVector.data()), shaderBinaryVector.size() * sizeof(uint32_t), compiledShaderFileName.c_str());
+	}
+
 	void* shaderBinary = nullptr;
 	size_t shaderBinaryAbsoluteSize = 0;
 

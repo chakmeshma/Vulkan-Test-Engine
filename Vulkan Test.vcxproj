@@ -78,7 +78,7 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>vulkan-1.lib;assimp-vc143-mt.lib;DevIL.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;assimp-vc143-mt.lib;DevIL.lib;shaderc_combined.lib;inireader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference />
   </ItemDefinitionGroup>
@@ -124,6 +124,7 @@
     <ClCompile Include="Vulkan Engine.cpp" />
     <ClCompile Include="Vulkan Engine Exception.cpp" />
     <ClCompile Include="shaderc_online_compiler.cpp" />
+    <ClInclude Include="initconfig.h" />
     <ClInclude Include="shaderc_online_compiler.h" />
     <ClInclude Include="Vulkan Engine Exception.h" />
     <ClInclude Include="Vulkan Engine.h" />

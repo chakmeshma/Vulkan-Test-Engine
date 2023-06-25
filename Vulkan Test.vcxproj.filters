@@ -24,6 +24,9 @@
     <ClInclude Include="shaderc_online_compiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="initconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

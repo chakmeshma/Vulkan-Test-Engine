@@ -3,6 +3,7 @@
 #include <thread>
 #include <iostream>
 #include "Vulkan Engine.h"
+#include "initconfig.h"
 
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
@@ -24,6 +25,7 @@
 #define _MAKE_WINDOW_NAME_STRINGIFY(x) __MAKE_WINDOW_NAME_STRINGIFY(x)
 #define MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_STRINGIFY(_MAKE_WINDOW_NAME())
 
+static InitConfiguration* initConfig = nullptr;
 
 static bool vulkanInited = false;
 static VulkanEngine* engine = NULL;
@@ -321,6 +323,17 @@ void initWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 
 int main() {
 	SetConsoleCtrlHandler(closeHandler, TRUE);
+
+	try {
+		initConfig = new InitConfiguration("settings.ini");
+	}
+	catch (...) {
+		std::cerr << "Couldn't load settings.ini" << std::endl;
+
+		return EXIT_FAILURE;
+	}
+
+	std::cout << "Settings file successfully loaded." << std::endl;
 
 	//Consequently, The first WM_SHOWWINDOW message starts the VulkanEngine initialization.
 	//initWindow(GetModuleHandle(NULL), NULL, "", 1);

@@ -8,22 +8,17 @@
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
-#define FULLSCREEN
-#define WINDOW_RESOLUTION_WIDTH 500
-#define WINDOW_RESOLUTION_HEIGHT 1000
-#define APP_WINDOW_NAME Vulkan Test
-
-#define _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH() WINDOW_RESOLUTION_WIDTH
-#define _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT() WINDOW_RESOLUTION_HEIGHT
-#define _MAKE_WINDOW_NAME_GET_NAME() APP_WINDOW_NAME
-#ifdef FULLSCREEN
-#define _MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_GET_NAME()\x20 Fullscreen
-#else
-#define _MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_GET_NAME()\x20 _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH()\x78 _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT()
-#endif
-#define __MAKE_WINDOW_NAME_STRINGIFY(x) #x
-#define _MAKE_WINDOW_NAME_STRINGIFY(x) __MAKE_WINDOW_NAME_STRINGIFY(x)
-#define MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_STRINGIFY(_MAKE_WINDOW_NAME())
+//#define _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH() WINDOW_RESOLUTION_WIDTH
+//#define _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT() WINDOW_RESOLUTION_HEIGHT
+//#define _MAKE_WINDOW_NAME_GET_NAME() APP_WINDOW_NAME
+//#ifdef FULLSCREEN
+//#define _MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_GET_NAME()\x20 Fullscreen
+//#else
+//#define _MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_GET_NAME()\x20 _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH()\x78 _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT()
+//#endif
+//#define __MAKE_WINDOW_NAME_STRINGIFY(x) #x
+//#define _MAKE_WINDOW_NAME_STRINGIFY(x) __MAKE_WINDOW_NAME_STRINGIFY(x)
+//#define MAKE_WINDOW_NAME() _MAKE_WINDOW_NAME_STRINGIFY(_MAKE_WINDOW_NAME())
 
 static InitConfiguration* initConfig = nullptr;
 
@@ -39,8 +34,8 @@ static int lastTranslationPosX = -1;
 static int lastTranslationPosY = -1;
 static float rotationSpeed = 10.0f;
 static float panSpeed = 1.0f;
-static float wheelZoomSpeed = .0001f;
-static float autoRotationSpeed = 0.000001f;
+//static float wheelZoomSpeed = .0001f;
+//static float autoRotationSpeed = 0.000001f;
 static bool autoRotationEnabled = true;
 
 void deleteEngineOrUnstableEngine() {
@@ -66,7 +61,7 @@ BOOL WINAPI closeHandler(DWORD dwCtrlType) {
 
 bool initVulkanReal(HINSTANCE hInstance, HWND windowHandle) {
 	try {
-		engine = new VulkanEngine(hInstance, windowHandle, pUnstableInstance);
+		engine = new VulkanEngine(hInstance, windowHandle, pUnstableInstance, initConfig);
 		VulkanEngine::calculateViewProjection(engine);
 
 		if (engine != NULL)
@@ -123,7 +118,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_MOUSEWHEEL:
 		wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 
-		appliedWheelData = 1.0f - float(wheelDelta) * wheelZoomSpeed;
+		appliedWheelData = 1.0f - float(wheelDelta) * initConfig->speedZoom;
 
 		engine->cameraDistance *= appliedWheelData;
 
@@ -209,7 +204,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //}
 
 void autoRotation(VulkanEngine* engine) {
-	engine->cameraRotationValue += autoRotationSpeed * engine->getElapsedTime();
+	engine->cameraRotationValue += initConfig->speedAutoRotation * engine->getElapsedTime();
 
 	VulkanEngine::calculateViewProjection(engine);
 }
@@ -230,72 +225,84 @@ void initWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 
 	WNDCLASSEX wc;
 	MSG msg;
-#ifdef FULLSCREEN
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = 0;
-	wc.lpfnWndProc = WndProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = g_szClassName;
-	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	if (initConfig->fullscreen) {
+		wc.cbSize = sizeof(WNDCLASSEX);
+		wc.style = 0;
+		wc.lpfnWndProc = WndProc;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = 0;
+		wc.hInstance = hInstance;
+		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+		wc.lpszMenuName = NULL;
+		wc.lpszClassName = g_szClassName;
+		wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
-	if (!RegisterClassEx(&wc))
-		throw std::exception();
+		if (!RegisterClassEx(&wc))
+			throw std::exception();
 
-	windowHandle = CreateWindowEx(
-		0,
-		g_szClassName,
-		MAKE_WINDOW_NAME(),
-		WS_POPUP,
-		0, 0, 1920, 1080,
-		NULL, NULL, hInstance, NULL);
+		int fullscreenResolutionX = GetSystemMetrics(SM_CXSCREEN);
+		int fullscreenResolutionY = GetSystemMetrics(SM_CYSCREEN);
 
-	ShowWindow(windowHandle, nCmdShow);
-	UpdateWindow(windowHandle);
+		windowHandle = CreateWindowEx(
+			0,
+			g_szClassName,
+			"Vulkan Test",
+			WS_POPUP,
+			0, 0, fullscreenResolutionX, fullscreenResolutionY,
+			NULL, NULL, hInstance, NULL);
 
-	DEVMODE screen;
-	memset(&screen, 0, sizeof(screen));
-	screen.dmSize = sizeof(screen);
-	screen.dmPelsWidth = 1920;
-	screen.dmPelsHeight = 1080;
-	screen.dmBitsPerPel = 32;
-	screen.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-	ChangeDisplaySettings(&screen, CDS_FULLSCREEN);
+		ShowWindow(windowHandle, nCmdShow);
+		UpdateWindow(windowHandle);
 
-	ShowCursor(false);
-#else
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = 0;
-	wc.lpfnWndProc = WndProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = g_szClassName;
-	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+		DEVMODE screen;
+		memset(&screen, 0, sizeof(screen));
+		screen.dmSize = sizeof(screen);
+		screen.dmPelsWidth = fullscreenResolutionX;
+		screen.dmPelsHeight = fullscreenResolutionY;
+		screen.dmBitsPerPel = 32;
+		screen.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+		ChangeDisplaySettings(&screen, CDS_FULLSCREEN);
 
-	if (!RegisterClassEx(&wc))
-		throw std::exception();
+		ShowCursor(false);
+	}
+	else {
+		wc.cbSize = sizeof(WNDCLASSEX);
+		wc.style = 0;
+		wc.lpfnWndProc = WndProc;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = 0;
+		wc.hInstance = hInstance;
+		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+		wc.lpszMenuName = NULL;
+		wc.lpszClassName = g_szClassName;
+		wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
-	windowHandle = CreateWindowEx(
-		WS_EX_CLIENTEDGE,
-		g_szClassName,
-		MAKE_WINDOW_NAME(),
-		WS_OVERLAPPEDWINDOW ^ (WS_THICKFRAME | WS_MAXIMIZEBOX),
-		CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_RESOLUTION_WIDTH + 20, WINDOW_RESOLUTION_HEIGHT + 43,
-		NULL, NULL, hInstance, NULL);
+		if (!RegisterClassEx(&wc))
+			throw std::exception();
 
-	ShowWindow(windowHandle, nCmdShow);
-	UpdateWindow(windowHandle);
-#endif
+		DWORD dwStyle = WS_OVERLAPPEDWINDOW ^ (WS_THICKFRAME | WS_MAXIMIZEBOX);
+		DWORD dwExStyle = WS_EX_CLIENTEDGE;
+
+		RECT windowRect{ 0,0,initConfig->windowResolutionX, initConfig->windowResolutionY };
+
+		AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
+
+		windowHandle = CreateWindowEx(
+			dwExStyle,
+			g_szClassName,
+			"Vulkan Test",
+			dwStyle,
+			CW_USEDEFAULT, CW_USEDEFAULT,
+			windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+			NULL, NULL, hInstance, NULL);
+
+		ShowWindow(windowHandle, nCmdShow);
+		UpdateWindow(windowHandle);
+	}
 
 	if (windowHandle == NULL)
 		throw std::exception();

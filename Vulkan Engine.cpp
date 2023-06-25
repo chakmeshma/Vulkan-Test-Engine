@@ -11,9 +11,17 @@
 
 VulkanEngine** ppUnstableInstance_img = NULL;
 
-VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance) {
+VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance, const InitConfiguration* initConfig) {
 	*ppUnstableInstance = this;
 	ppUnstableInstance_img = ppUnstableInstance;
+
+	this->cameraDistance = -initConfig->distanceCamera;
+	this->fovAngle = initConfig->verticalFOV;
+	this->zNear = initConfig->zNear;
+	this->zFar = initConfig->zFar;
+	this->textureDim = initConfig->texDimension;
+	this->verticalSyncEnabled = initConfig->vsync;
+	this->meshFileName = initConfig->meshFileName;
 
 	this->hInstance = hInstance;
 	this->windowHandle = windowHandle;
@@ -84,7 +92,7 @@ void VulkanEngine::init() {
 	createSyncMeans();
 	getDeviceExtensions();
 	getDeviceLayers();
-	loadMesh("mesh");
+	loadMesh(meshFileName.c_str());
 	createAllTextures();
 	createAllBuffers();
 	getQueues();

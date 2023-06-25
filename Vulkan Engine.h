@@ -53,6 +53,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include "Vulkan Engine Exception.h"
 #include "shaderc_online_compiler.h"
+#include "initconfig.h"
 
 using namespace glm;
 
@@ -82,7 +83,7 @@ struct ViewProjectionMatrices {
 class VulkanEngine {
 public:
 
-	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance);
+	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance, const InitConfiguration* initConfig);
 
 	~VulkanEngine() noexcept(false);
 
@@ -98,7 +99,13 @@ public:
 
 	bool terminating = false;
 
-	float cameraDistance = -0.35f;
+	float cameraDistance;
+	float fovAngle;
+	float zNear;
+	float zFar;
+	uint16_t textureDim;
+	bool verticalSyncEnabled;
+	std::string meshFileName;
 
 	float cameraRotationValue = 0.0f;
 
@@ -423,11 +430,6 @@ private:
 	//VkPipeline graphicsDebugPipeline;
 
 	std::string resourcesPath = "Resources\\";
-	float fovAngle = 60.0f;
-	const float zNear = 0.1f;
-	const float zFar = 1.0f;
-	const uint16_t textureDim = 2048;
-	const bool verticalSyncEnabled = true;
 };
 
 

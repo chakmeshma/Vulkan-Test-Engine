@@ -70,7 +70,7 @@ bool initVulkanReal(HINSTANCE hInstance, HWND windowHandle) {
 	catch (VulkanException e) {
 		std::cerr << e.what();
 
-		getchar();
+		system("pause");
 
 		delete* pUnstableInstance;
 
@@ -336,6 +336,8 @@ int main() {
 	}
 	catch (...) {
 		std::cerr << "Couldn't load settings.ini" << std::endl;
+
+		system("pause");
 
 		return EXIT_FAILURE;
 	}

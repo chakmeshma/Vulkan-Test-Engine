@@ -22,6 +22,9 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine*
 	this->textureDim = initConfig->texDimension;
 	this->verticalSyncEnabled = initConfig->vsync;
 	this->meshFileName = initConfig->meshFileName;
+	this->resourcesPath = initConfig->resourceDirName;
+	this->resourcesPath.append("\\");
+	this->clearColor = initConfig->clearColor;
 
 	this->hInstance = hInstance;
 	this->windowHandle = windowHandle;
@@ -2477,6 +2480,13 @@ void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShad
 }
 
 std::string VulkanEngine::loadShaderCode(const char* fileName) {
+	if (!checkFileExist(fileName))
+	{
+		std::string exceptionWhat = "Couldn't open shader file ";
+		exceptionWhat.append(fileName);
+		throw VulkanException(exceptionWhat.c_str());
+	}
+
 	std::string line;
 	std::string code = "";
 	std::ifstream infile;
@@ -2644,9 +2654,9 @@ void VulkanEngine::render(uint32_t drawableImageIndex) {
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
 
 	VkClearValue clearValues[2];
-	clearValues[0].color.float32[0] = 0.1f; //gray clear color
-	clearValues[0].color.float32[1] = 0.1f;
-	clearValues[0].color.float32[2] = 0.1f;
+	clearValues[0].color.float32[0] = clearColor[0];
+	clearValues[0].color.float32[1] = clearColor[1];
+	clearValues[0].color.float32[2] = clearColor[2];
 	clearValues[0].color.float32[3] = 1.0f;
 
 	clearValues[1].depthStencil = { 1.0f, 0 };
@@ -2936,15 +2946,18 @@ void VulkanEngine::loadMesh(const char* fileName) {
 
 	const aiScene* scene = aiImportFile(meshPath.c_str(),
 		aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+
+	if (scene == NULL)
+		throw VulkanException("Couldn't load mesh file: ");
+	else
+		std::cout << "Mesh file loaded successfully." << std::endl;
+
 	memcpy(cachedScene, scene, sizeof(aiScene));
 
 	std::cout << "Number of Meshes reported from Assimp: " << cachedScene->mNumMeshes << std::endl;
 
-	if (scene == NULL) {
-		throw VulkanException("Couldn't load obj file: ");
-	}
-	else {
-		std::cout << "Mesh File Loaded successfully." << std::endl;
+	for (uint32_t subMeshIndex = 0; subMeshIndex < cachedScene->mNumMeshes; subMeshIndex++) {
+		std::cout << "\t" << cachedScene->mMeshes[subMeshIndex]->mName.C_Str() << std::endl;
 	}
 
 	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {

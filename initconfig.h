@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 void* iniReaderInstantiate(const char* fileName);
 void iniReaderDestroy(void* iniReader);
@@ -9,6 +10,8 @@ int iniReaderGetInt(void* iniReader, const char* section, const char* name);
 float iniReaderGetFloat(void* iniReader, const char* section, const char* name);
 std::string iniReaderGetString(void* iniReader, const char* section, const char* name);
 std::string iniReaderGetStringDefault(void* iniReader, const char* section, const char* name, const char* defaultValue);
+float iniReaderGetFloatDefault(void* iniReader, const char* section, const char* name, float defaultValue);
+std::vector<float> iniReaderGetFloatVector(void* iniReader, const char* section, const char* name);
 
 struct InitConfiguration {
 	bool fullscreen;
@@ -23,6 +26,8 @@ struct InitConfiguration {
 	float speedZoom;
 	int texDimension;
 	std::string meshFileName;
+	std::string resourceDirName;
+	std::vector<float> clearColor;
 
 	InitConfiguration(const char* configFileName) {
 		void* iniReader = iniReaderInstantiate(configFileName);
@@ -39,6 +44,8 @@ struct InitConfiguration {
 		speedZoom = iniReaderGetFloat(iniReader, "Interaction", "ZoomSpeed");
 		texDimension = iniReaderGetInt(iniReader, "Resource", "TexturesDimension");
 		meshFileName = iniReaderGetStringDefault(iniReader, "Resource", "MeshFileNameOverride", "mesh");
+		resourceDirName = iniReaderGetStringDefault(iniReader, "Resource", "ResourceDirNameOverride", "Resources");
+		clearColor = iniReaderGetFloatVector(iniReader, "Misc", "ClearColor");
 
 		iniReaderDestroy(iniReader);
 	}

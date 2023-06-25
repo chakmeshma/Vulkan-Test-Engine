@@ -99,15 +99,9 @@ public:
 
 	bool terminating = false;
 
-	float cameraDistance;
-	float fovAngle;
-	float zNear;
-	float zFar;
-	uint16_t textureDim;
-	bool verticalSyncEnabled;
-	std::string meshFileName;
-
 	float cameraRotationValue = 0.0f;
+
+	float cameraDistance;
 
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};
@@ -429,7 +423,14 @@ private:
 	//VkShaderModule graphicsNormalViewerFragmentShaderModule;
 	//VkPipeline graphicsDebugPipeline;
 
-	std::string resourcesPath = "Resources\\";
+	float fovAngle;
+	float zNear;
+	float zFar;
+	uint16_t textureDim;
+	bool verticalSyncEnabled;
+	std::string meshFileName;
+	std::vector<float> clearColor;
+	std::string resourcesPath;
 };
 
 

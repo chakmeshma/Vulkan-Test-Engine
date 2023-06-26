@@ -12,6 +12,8 @@
 VulkanEngine** ppUnstableInstance_img = NULL;
 
 VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance, const InitConfiguration* initConfig) {
+	initVkObjectsNull();
+
 	*ppUnstableInstance = this;
 	ppUnstableInstance_img = ppUnstableInstance;
 
@@ -30,6 +32,29 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine*
 	this->windowHandle = windowHandle;
 
 	init();
+}
+
+void VulkanEngine::initVkObjectsNull() {
+
+	NULL_HANDLE_INIT_ARRAY(colorTextureImages, MAX_COLOR_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(colorTextureImagesDevice, MAX_COLOR_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(colorTextureViews, MAX_COLOR_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(meshDescriptorSets, MAX_MESHES)
+
+	NULL_HANDLE_INIT_ARRAY(uniformBuffers, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(uniformBuffersDevice, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(vertexBuffersDevice, MAX_VERTEX_BUFFER_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(vertexBuffers, MAX_VERTEX_BUFFER_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(indexBuffersDevice, MAX_INDEX_BUFFER_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(indexBuffers, MAX_INDEX_BUFFER_ARRAY_SIZE)
+
+	NULL_HANDLE_INIT_ARRAY(specTextureViews, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(specTextureImages, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
+
+	NULL_HANDLE_INIT_ARRAY(normalTextureImagesDevice, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(normalTextureImages, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(normalTextureViews, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(specTextureImagesDevice, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
 }
 
 VulkanEngine::~VulkanEngine() noexcept(false) {
@@ -1676,6 +1701,8 @@ void VulkanEngine::createSparseImage() {
 
 	sparseImages = new VkImage[1];
 
+	NULL_HANDLE_INIT_ARRAY(sparseImages, 1)
+
 	VkResult result = vkCreateImage(logicalDevices[0], &sparseImageCreateInfo, nullptr, sparseImages);
 
 	switch (result) {
@@ -2010,6 +2037,8 @@ void VulkanEngine::createSwapchain() {
 
 	swapchainImages = new VkImage[swapchainImagesCount];
 
+	NULL_HANDLE_INIT_ARRAY(swapchainImages, swapchainImagesCount)
+
 	if ((swapchainImageResult = vkGetSwapchainImagesKHR(logicalDevices[0], swapchain, &swapchainImagesCount,
 		swapchainImages)) == VK_SUCCESS) {
 		std::cout << "Swapchain images obtained successfully." << std::endl;
@@ -2172,6 +2201,8 @@ void VulkanEngine::createRenderpass() {
 void VulkanEngine::createFramebuffers() {
 	framebuffers = new VkFramebuffer[swapchainImagesCount];
 
+	NULL_HANDLE_INIT_ARRAY(framebuffers, swapchainImagesCount)
+
 	for (uint32_t i = 0; i < swapchainImagesCount; i++) {
 		VkImageView attachments[2] = { swapchainImageViews[i], depthImageView };
 
@@ -2199,6 +2230,8 @@ void VulkanEngine::createFramebuffers() {
 void VulkanEngine::createSwapchainImageViews() {
 
 	swapchainImageViews = new VkImageView[swapchainImagesCount];
+
+	NULL_HANDLE_INIT_ARRAY(swapchainImageViews, swapchainImagesCount)
 
 	for (uint32_t i = 0; i < swapchainImagesCount; i++) {
 		VkImage swapchainImage = swapchainImages[i];

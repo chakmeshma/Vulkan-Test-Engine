@@ -32,6 +32,7 @@
 #define PRINT_QUEUE_FAMILIES
 #endif
 
+#define NULL_HANDLE_INIT_ARRAY(X, SIZE) for (uint32_t i = 0; i < SIZE; i++) X[i] = VK_NULL_HANDLE;
 
 #include <vulkan/vulkan.h>
 #include <stdlib.h>
@@ -86,6 +87,8 @@ public:
 	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance, const InitConfiguration* initConfig);
 
 	~VulkanEngine() noexcept(false);
+
+	void initVkObjectsNull();
 
 	bool isInited();
 
@@ -165,13 +168,13 @@ private:
 
 
 	uint32_t instanceExtensionsCount = 0;
-	VkInstance instance;
-	VkDevice logicalDevices[1];
+	VkInstance instance = VK_NULL_HANDLE;
+	VkDevice logicalDevices[1]{ VK_NULL_HANDLE };
 	VkDeviceQueueCreateInfo deviceQueueCreateInfos[2];
 	VkInstanceCreateInfo instanceCreateInfo = {};
 	VkApplicationInfo appInfo = {};
 	uint32_t numberOfSupportedDevices = 1;
-	VkPhysicalDevice physicalDevices[1];
+	VkPhysicalDevice physicalDevices[1]{ VK_NULL_HANDLE };
 	VkPhysicalDeviceProperties deviceProperties = {};
 	VkPhysicalDeviceFeatures supportedDeviceFeatures = {};
 	VkPhysicalDeviceFeatures desiredDeviceFeatures = {};
@@ -193,9 +196,9 @@ private:
 	VkImageFormatProperties imageFormatProperties = {};
 	VkFormatProperties formatProperties = {};
 	VkImageCreateInfo imageCreateInfo = {};
-	VkImage depthImage;
+	VkImage depthImage = VK_NULL_HANDLE;
 	VkImageViewCreateInfo imageViewCreateInfo = {};
-	VkImageView depthImageView;
+	VkImageView depthImageView = VK_NULL_HANDLE;
 	uint32_t memoryTypeCount = 0;
 	uint32_t hostVisibleMemoryTypeIndex = -1;
 	uint32_t deviceLocalMemoryTypeIndex = -1;
@@ -208,13 +211,13 @@ private:
 	VkImageCreateInfo sparseImageCreateInfo = {};
 	VkSparseImageFormatProperties* physicalDeviceSparseImageFormatProperties;
 	uint32_t physicalDeviceSparseImageFormatPropertiesCount = 0;
-	VkQueue graphicsQueue;
-	VkQueue transferQueue;
+	VkQueue graphicsQueue = VK_NULL_HANDLE;
+	VkQueue transferQueue = VK_NULL_HANDLE;
 	HINSTANCE hInstance;
 	HWND windowHandle;
 	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
-	VkSurfaceKHR surface;
-	VkSwapchainKHR swapchain;
+	VkSurfaceKHR surface = VK_NULL_HANDLE;
+	VkSwapchainKHR swapchain = VK_NULL_HANDLE;
 	VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	VkBool32 physicalDeviceSurfaceSupported = VK_FALSE;
@@ -228,28 +231,28 @@ private:
 	VkImageView* swapchainImageViews;
 	VkPresentInfoKHR presentInfo = {};
 	VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
-	VkShaderModule computeShaderModule = {};
+	VkShaderModule computeShaderModule = VK_NULL_HANDLE;
 	VkComputePipelineCreateInfo computePipelineCreateInfo = {};
-	VkPipeline computePipeline = {};
-	VkPipeline graphicsPipeline = {};
+	VkPipeline computePipeline = VK_NULL_HANDLE;
+	VkPipeline graphicsPipeline = VK_NULL_HANDLE;
 	VkDescriptorSetLayoutCreateInfo computeDescriptorSetLayoutCreateInfo = {};
 	VkDescriptorSetLayoutCreateInfo graphicsDescriptorSetLayoutCreateInfo = {};
-	VkDescriptorSetLayout computeDescriptorSetLayout = {};
-	VkDescriptorSetLayout graphicsDescriptorSetLayout = {};
+	VkDescriptorSetLayout computeDescriptorSetLayout = VK_NULL_HANDLE;
+	VkDescriptorSetLayout graphicsDescriptorSetLayout = VK_NULL_HANDLE;
 	VkPipelineLayoutCreateInfo computePipelineLayoutCreateInfo = {};
 	VkPipelineLayoutCreateInfo graphicsPipelineLayoutCreateInfo = {};
-	VkPipelineLayout computePipelineLayout = {};
-	VkPipelineLayout graphicsPipelineLayout = {};
+	VkPipelineLayout computePipelineLayout = VK_NULL_HANDLE;
+	VkPipelineLayout graphicsPipelineLayout = VK_NULL_HANDLE;
 	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
-	VkDescriptorPool descriptorPool = {};
+	VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
 	VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {};
 	VkRenderPassCreateInfo renderPassCreateInfo = {};
-	VkRenderPass renderPass = {};
+	VkRenderPass renderPass = VK_NULL_HANDLE;
 	VkFramebuffer* framebuffers;
 	VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {};
-	VkShaderModule graphicsVertexShaderModule;
+	VkShaderModule graphicsVertexShaderModule = VK_NULL_HANDLE;
 	//VkShaderModule graphicsGeometryShaderModule;
-	VkShaderModule graphicsFragmentShaderModule;
+	VkShaderModule graphicsFragmentShaderModule = VK_NULL_HANDLE;
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {};
 	VkVertexInputBindingDescription vertexBindingDescription = {};
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {};
@@ -259,12 +262,12 @@ private:
 	VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {};
 	VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {};
 	VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = {};
-	VkSemaphore waitToPresentSemaphore;
-	VkSemaphore indexAcquiredSemaphore;
+	VkSemaphore waitToPresentSemaphore = VK_NULL_HANDLE;
+	VkSemaphore indexAcquiredSemaphore = VK_NULL_HANDLE;
 
-	VkCommandPool renderCommandPool;
-	VkCommandPool transferCommandPool;
-	VkCommandBuffer renderCommandBuffer;
+	VkCommandPool renderCommandPool = VK_NULL_HANDLE;
+	VkCommandPool transferCommandPool = VK_NULL_HANDLE;
+	VkCommandBuffer renderCommandBuffer = VK_NULL_HANDLE;
 	VkFormat surfaceImageFormat;
 	VkFormat depthFormat;
 	std::vector<Attribute<float>> sortedAttributes[MAX_VERTEX_BUFFER_ARRAY_SIZE];
@@ -282,11 +285,11 @@ private:
 
 	VkImage specTextureImages[MAX_SPECULAR_TEXTURE_ARRAY_SIZE];
 	VkImageView specTextureViews[MAX_SPECULAR_TEXTURE_ARRAY_SIZE];
-	VkDeviceMemory depthImageMemory;
-	VkDeviceMemory uniTexturesMemory;
-	VkDeviceMemory uniBuffersMemory;
-	VkDeviceMemory uniTexturesMemoryDevice;
-	VkDeviceMemory uniBuffersMemoryDevice;
+	VkDeviceMemory depthImageMemory = VK_NULL_HANDLE;
+	VkDeviceMemory uniTexturesMemory = VK_NULL_HANDLE;
+	VkDeviceMemory uniBuffersMemory = VK_NULL_HANDLE;
+	VkDeviceMemory uniTexturesMemoryDevice = VK_NULL_HANDLE;
+	VkDeviceMemory uniBuffersMemoryDevice = VK_NULL_HANDLE;
 	VkBuffer uniformBuffersDevice[MAX_UNIFORM_BUFFER_ARRAY_SIZE];
 	VkBuffer vertexBuffersDevice[MAX_VERTEX_BUFFER_ARRAY_SIZE];
 	VkBuffer indexBuffersDevice[MAX_INDEX_BUFFER_ARRAY_SIZE];
@@ -307,8 +310,8 @@ private:
 	VkDeviceSize* indexBuffersBindOffsets;
 	aiScene* cachedScene = NULL;
 	VkDescriptorSet meshDescriptorSets[MAX_MESHES];
-	VkSampler textureSampler;
-	VkFence queueDoneFence;
+	VkSampler textureSampler = VK_NULL_HANDLE;
+	VkFence queueDoneFence = VK_NULL_HANDLE;
 	LARGE_INTEGER frequency;        // ticks per second
 	LARGE_INTEGER t1, t2;           // ticks
 	double elapsedTime;

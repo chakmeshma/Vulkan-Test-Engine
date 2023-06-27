@@ -1,4 +1,3 @@
-#include <cstring>
 #include "Vulkan Engine Exception.h"
 
 

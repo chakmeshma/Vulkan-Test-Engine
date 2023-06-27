@@ -1,21 +1,10 @@
-//
 // Created by chakmeshma on 20.11.2017.
-//
 
 #include "Vulkan Engine.h"
-//#pragma comment(linker, "/STACK:20000000000")
-
-//#pragma comment(linker, "/HEAP:2000000000")
 
 
-
-VulkanEngine** ppUnstableInstance_img = NULL;
-
-VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance, const InitConfiguration* initConfig) {
+VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitConfiguration* initConfig) {
 	initVkObjectsNull();
-
-	*ppUnstableInstance = this;
-	ppUnstableInstance_img = ppUnstableInstance;
 
 	this->cameraDistance = -initConfig->distanceCamera;
 	this->fovAngle = initConfig->verticalFOV;
@@ -27,6 +16,7 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine*
 	this->resourcesPath = initConfig->resourceDirName;
 	this->resourcesPath.append("\\");
 	this->clearColor = initConfig->clearColor;
+	this->autoRotationSpeed = initConfig->speedAutoRotation;
 
 	this->hInstance = hInstance;
 	this->windowHandle = windowHandle;
@@ -153,12 +143,6 @@ void VulkanEngine::init() {
 	createDescriptorPool(); // create descriptorpool
 	createDescriptorSets();
 	setupTimer();
-
-	inited = true;
-}
-
-bool VulkanEngine::isInited() {
-	return inited;
 }
 
 void VulkanEngine::setupTimer() {
@@ -167,6 +151,40 @@ void VulkanEngine::setupTimer() {
 
 	// start timer
 	QueryPerformanceCounter(&t1);
+}
+
+void VulkanEngine::calculateViewProjection() {
+
+	mat4x4 rotationMatrix = glm::mat4(1.0f);
+
+	rotationMatrix = glm::rotate(rotationMatrix, glm::radians(this->focusYaw), glm::vec3(0.0f, 1.0f, 0.0f));
+	rotationMatrix = glm::rotate(rotationMatrix, glm::radians(this->focusPitch), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	glm::vec4 cameraPosition = /*rotationMatrix **/ glm::vec4(0.0, 0.0, -this->cameraDistance, 1.0);
+
+	glm::vec3 focusPoint(this->focusPointX, this->focusPointY, this->focusPointZ);
+
+	this->viewProjection.viewMatrix = glm::lookAt(glm::vec3(cameraPosition), focusPoint,
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	static const glm::vec3 cameraRotationAxis(.0f, 1.0f, .0f);
+
+	this->viewProjection.viewMatrix = glm::rotate(this->viewProjection.viewMatrix, this->cameraRotationValue, cameraRotationAxis);
+
+
+	float frameBufferAspectRatio =
+		((float)this->swapchainCreateInfo.imageExtent.width) /
+		((float)this->swapchainCreateInfo.imageExtent.height);
+
+
+	this->viewProjection.projectionMatrix = glm::perspective(glm::radians(this->fovAngle),
+		frameBufferAspectRatio, this->zNear,
+		this->zFar);
+}
+
+void VulkanEngine::cameraRotate() {
+	cameraRotationValue += autoRotationSpeed * getElapsedTime();
+	calculateViewProjection();
 }
 
 void VulkanEngine::getSupportedDepthFormat() {
@@ -195,9 +213,6 @@ void VulkanEngine::getSupportedDepthFormat() {
 }
 
 void VulkanEngine::draw() {
-	if (!inited)
-		return;
-
 	uint32_t drawableImageIndex = acquireNextFramebufferImageIndex();
 	render(drawableImageIndex);
 	present(drawableImageIndex);
@@ -810,7 +825,6 @@ void VulkanEngine::getPhysicalDevicePropertiesAndFeatures() {
 }
 
 void VulkanEngine::terminate() {
-	this->terminating = true;
 	//if (*ppUnstableInstance_img != NULL)
 	//	instanceToTerminate = *ppUnstableInstance_img;
 	//else

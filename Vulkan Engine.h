@@ -1,10 +1,4 @@
-//
 // Created by chakmeshma on 20.11.2017.
-//
-
-#ifndef VULKAN_TEST_VULKAN_ENGINE_H
-#define VULKAN_TEST_VULKAN_ENGINE_H
-
 #pragma once
 
 #define VK_USE_PLATFORM_WIN32_KHR
@@ -84,13 +78,11 @@ struct ViewProjectionMatrices {
 class VulkanEngine {
 public:
 
-	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, VulkanEngine** ppUnstableInstance, const InitConfiguration* initConfig);
+	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitConfiguration* initConfig);
 
 	~VulkanEngine() noexcept(false);
 
 	void initVkObjectsNull();
-
-	bool isInited();
 
 	void getInstanceExtensions();
 
@@ -100,8 +92,6 @@ public:
 
 	void draw();
 
-	bool terminating = false;
-
 	float cameraRotationValue = 0.0f;
 
 	float cameraDistance;
@@ -109,35 +99,9 @@ public:
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};
 
+	void cameraRotate();
 
-	static void calculateViewProjection(VulkanEngine* instance) {
-
-		mat4x4 rotationMatrix = glm::mat4(1.0f);
-
-		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(instance->focusYaw), glm::vec3(0.0f, 1.0f, 0.0f));
-		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(instance->focusPitch), glm::vec3(1.0f, 0.0f, 0.0f));
-
-		glm::vec4 cameraPosition = /*rotationMatrix **/ glm::vec4(0.0, 0.0, -instance->cameraDistance, 1.0);
-
-		glm::vec3 focusPoint(instance->focusPointX, instance->focusPointY, instance->focusPointZ);
-
-		instance->viewProjection.viewMatrix = glm::lookAt(glm::vec3(cameraPosition), focusPoint,
-			glm::vec3(0.0f, 1.0f, 0.0f));
-
-		static const glm::vec3 cameraRotationAxis(.0f, 1.0f, .0f);
-
-		instance->viewProjection.viewMatrix = glm::rotate(instance->viewProjection.viewMatrix, instance->cameraRotationValue, cameraRotationAxis);
-
-
-		float frameBufferAspectRatio =
-			((float)instance->swapchainCreateInfo.imageExtent.width) /
-			((float)instance->swapchainCreateInfo.imageExtent.height);
-
-
-		instance->viewProjection.projectionMatrix = glm::perspective(glm::radians(instance->fovAngle),
-			frameBufferAspectRatio, instance->zNear,
-			instance->zFar);
-	}
+	void calculateViewProjection();
 
 	float getElapsedTime();
 
@@ -315,7 +279,6 @@ private:
 	LARGE_INTEGER frequency;        // ticks per second
 	LARGE_INTEGER t1, t2;           // ticks
 	double elapsedTime;
-	bool inited = false;
 
 
 	void init();
@@ -426,6 +389,7 @@ private:
 	//VkShaderModule graphicsNormalViewerFragmentShaderModule;
 	//VkPipeline graphicsDebugPipeline;
 
+	float autoRotationSpeed;
 	float fovAngle;
 	float zNear;
 	float zFar;
@@ -436,5 +400,3 @@ private:
 	std::string resourcesPath;
 };
 
-
-#endif //VULKAN_TEST_VULKAN_ENGINE_H

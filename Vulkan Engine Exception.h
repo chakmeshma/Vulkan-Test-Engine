@@ -1,13 +1,8 @@
-//
 // Created by chakmeshma on 20.11.2017.
-//
-
-#ifndef VULKAN_TEST_VULKANENGINEEXCEPTION_H
-#define VULKAN_TEST_VULKANENGINEEXCEPTION_H
-
 #pragma once
 
 #include <string>
+
 
 struct VulkanException : public std::exception {
 public:
@@ -19,5 +14,3 @@ private:
 	std::string msg;
 };
 
-
-#endif //VULKAN_TEST_VULKANENGINEEXCEPTION_H

@@ -274,7 +274,7 @@ private:
 	VkDeviceSize* uniformBuffersBindOffsets;
 	VkDeviceSize* vertexBuffersBindOffsets;
 	VkDeviceSize* indexBuffersBindOffsets;
-	aiScene* cachedScene = NULL;
+	aiScene* cachedScene = nullptr;
 	VkDescriptorSet meshDescriptorSets[MAX_MESHES];
 	VkSampler textureSampler = VK_NULL_HANDLE;
 	VkFence queueDoneFence = VK_NULL_HANDLE;

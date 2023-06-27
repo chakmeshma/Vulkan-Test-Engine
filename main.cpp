@@ -278,10 +278,17 @@ unsigned __stdcall windowThreadProc(void* data) {
 
 		sharedData->set_wndHWND(hwnd); //todo: maybe I should supply hwnd to shareddata later (eg. after or inside first WM_CREATE)?
 
+		bool wmCloseSentBecauseOfTerminating = false;
+
 		MSG msg = {};
 		while (GetMessage(&msg, NULL, 0, 0)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+			if (!wmCloseSentBecauseOfTerminating && sharedData->get_terminating()) {
+				PostMessage(hwnd, WM_CLOSE, 0, 0);
+				wmCloseSentBecauseOfTerminating = true;
+			}
 		}
 	}
 	else
@@ -304,7 +311,7 @@ unsigned __stdcall engineThreadProc(void* data) {
 		return 0;
 
 	try {
-		ilInit();
+		ilInit(); //TODO move this to the VulkanEngine
 		std::cout << "DevIL library inited." << std::endl;
 
 		engine = new VulkanEngine(sharedData->hInstance, sharedData->get_wndHWND(), sharedData->initConfig);

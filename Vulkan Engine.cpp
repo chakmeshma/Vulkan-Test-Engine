@@ -868,174 +868,108 @@ void VulkanEngine::terminate() {
 		std::cout << "Texture Sampler destroyed." << std::endl;
 	}
 
+	if (cachedScene != nullptr) {
+		uint32_t numUniformBuffersDeviceDestroyed = 0;
+		uint32_t numVertexBuffersDeviceDestroyed = 0;
+		uint32_t numIndexBuffersDeviceDestroyed = 0;
+		for (uint16_t i = 0; i < cachedScene->mNumMeshes; i++) {
+			if (uniformBuffersDevice[i] != VK_NULL_HANDLE) {
+				vkDestroyBuffer(logicalDevices[0], uniformBuffersDevice[i], nullptr);
+				numUniformBuffersDeviceDestroyed++;
+			}
 
+			if (vertexBuffersDevice[i] != VK_NULL_HANDLE) {
+				vkDestroyBuffer(logicalDevices[0], vertexBuffersDevice[i], nullptr);
+				numVertexBuffersDeviceDestroyed++;
+			}
 
-
-
-	uint32_t numUniformBuffersDeviceDestroyed = 0;
-	uint32_t numVertexBuffersDeviceDestroyed = 0;
-	uint32_t numIndexBuffersDeviceDestroyed = 0;
-	for (uint16_t i = 0; i < cachedScene->mNumMeshes; i++) {
-		if (uniformBuffersDevice[i] != VK_NULL_HANDLE) {
-			vkDestroyBuffer(logicalDevices[0], uniformBuffersDevice[i], nullptr);
-			numUniformBuffersDeviceDestroyed++;
+			if (indexBuffersDevice[i] != VK_NULL_HANDLE) {
+				vkDestroyBuffer(logicalDevices[0], indexBuffersDevice[i], nullptr);
+				numIndexBuffersDeviceDestroyed++;
+			}
 		}
-
-		if (vertexBuffersDevice[i] != VK_NULL_HANDLE) {
-			vkDestroyBuffer(logicalDevices[0], vertexBuffersDevice[i], nullptr);
-			numVertexBuffersDeviceDestroyed++;
-		}
-
-		if (indexBuffersDevice[i] != VK_NULL_HANDLE) {
-			vkDestroyBuffer(logicalDevices[0], indexBuffersDevice[i], nullptr);
-			numIndexBuffersDeviceDestroyed++;
-		}
+		if (numUniformBuffersDeviceDestroyed)
+			std::cout << numUniformBuffersDeviceDestroyed << " Uniform Buffer(s) destroyed." << std::endl;
+		if (numVertexBuffersDeviceDestroyed)
+			std::cout << numVertexBuffersDeviceDestroyed << " Vertex Buffer(s) destroyed." << std::endl;
+		if (numIndexBuffersDeviceDestroyed)
+			std::cout << numIndexBuffersDeviceDestroyed << " Index Buffer(s) destroyed." << std::endl;
 	}
-	if (numUniformBuffersDeviceDestroyed)
-		std::cout << numUniformBuffersDeviceDestroyed << " Uniform Buffer(s) destroyed." << std::endl;
-	if (numVertexBuffersDeviceDestroyed)
-		std::cout << numVertexBuffersDeviceDestroyed << " Vertex Buffer(s) destroyed." << std::endl;
-	if (numIndexBuffersDeviceDestroyed)
-		std::cout << numIndexBuffersDeviceDestroyed << " Index Buffer(s) destroyed." << std::endl;
-
-
-
 
 	if (uniBuffersMemoryDevice != VK_NULL_HANDLE) {
 		vkFreeMemory(logicalDevices[0], uniBuffersMemoryDevice, nullptr);
 		std::cout << "Buffers Memory freed." << std::endl;
 	}
 
+	if (cachedScene != nullptr) {
+		uint32_t numImageViewsDestroyed = 0;
+		uint32_t numImagesDestroyed = 0;
+		for (uint16_t i = 0; i < cachedScene->mNumMeshes; i++) {
+			if (specTextureViews[i] != VK_NULL_HANDLE) {
+				vkDestroyImageView(logicalDevices[0], specTextureViews[i], nullptr);
+				numImageViewsDestroyed++;
+			}
 
+			if (specTextureImagesDevice[i] != VK_NULL_HANDLE) {
+				vkDestroyImage(logicalDevices[0], specTextureImagesDevice[i], nullptr);
+				numImagesDestroyed++;
+			}
 
+			if (normalTextureViews[i] != VK_NULL_HANDLE) {
+				vkDestroyImageView(logicalDevices[0], normalTextureViews[i], nullptr);
+				numImageViewsDestroyed++;
+			}
 
+			if (normalTextureImagesDevice[i] != VK_NULL_HANDLE) {
+				vkDestroyImage(logicalDevices[0], normalTextureImagesDevice[i], nullptr);
+				numImagesDestroyed++;
+			}
 
+			if (colorTextureViews[i] != VK_NULL_HANDLE) {
+				vkDestroyImageView(logicalDevices[0], colorTextureViews[i], nullptr);
+				numImageViewsDestroyed++;
+			}
 
-
-
-
-	uint32_t numImageViewsDestroyed = 0;
-	uint32_t numImagesDestroyed = 0;
-	for (uint16_t i = 0; i < cachedScene->mNumMeshes; i++) {
-		if (specTextureViews[i] != VK_NULL_HANDLE) {
-			vkDestroyImageView(logicalDevices[0], specTextureViews[i], nullptr);
-			numImageViewsDestroyed++;
+			if (colorTextureImagesDevice[i] != VK_NULL_HANDLE) {
+				vkDestroyImage(logicalDevices[0], colorTextureImagesDevice[i], nullptr);
+				numImagesDestroyed++;
+			}
 		}
-
-		if (specTextureImagesDevice[i] != VK_NULL_HANDLE) {
-			vkDestroyImage(logicalDevices[0], specTextureImagesDevice[i], nullptr);
-			numImagesDestroyed++;
-		}
-
-		if (normalTextureViews[i] != VK_NULL_HANDLE) {
-			vkDestroyImageView(logicalDevices[0], normalTextureViews[i], nullptr);
-			numImageViewsDestroyed++;
-		}
-
-		if (normalTextureImagesDevice[i] != VK_NULL_HANDLE) {
-			vkDestroyImage(logicalDevices[0], normalTextureImagesDevice[i], nullptr);
-			numImagesDestroyed++;
-		}
-
-		if (colorTextureViews[i] != VK_NULL_HANDLE) {
-			vkDestroyImageView(logicalDevices[0], colorTextureViews[i], nullptr);
-			numImageViewsDestroyed++;
-		}
-
-		if (colorTextureImagesDevice[i] != VK_NULL_HANDLE) {
-			vkDestroyImage(logicalDevices[0], colorTextureImagesDevice[i], nullptr);
-			numImagesDestroyed++;
-		}
+		if (numImageViewsDestroyed)
+			std::cout << numImageViewsDestroyed << " ImageView(s) Destroyed." << std::endl;
+		if (numImagesDestroyed)
+			std::cout << numImagesDestroyed << " Image(s) Destroyed." << std::endl;
 	}
-	if (numImageViewsDestroyed)
-		std::cout << numImageViewsDestroyed << " ImageView(s) Destroyed." << std::endl;
-	if (numImagesDestroyed)
-		std::cout << numImagesDestroyed << " Image(s) Destroyed." << std::endl;
-
-
 
 	if (uniTexturesMemoryDevice != VK_NULL_HANDLE) {
 		vkFreeMemory(logicalDevices[0], uniTexturesMemoryDevice, nullptr);
 		std::cout << "Textures Memory freed." << std::endl;
 	}
 
-
-
 	if (graphicsDescriptorSetLayout != VK_NULL_HANDLE) {
 		vkDestroyDescriptorSetLayout(logicalDevices[0], graphicsDescriptorSetLayout, nullptr);
 		std::cout << "DescriptorSet Layout destroyed successfully." << std::endl;
 	}
-
-
-
-
-
-
-
 
 	if (descriptorPool != VK_NULL_HANDLE) {
 		vkDestroyDescriptorPool(logicalDevices[0], descriptorPool, nullptr);
 		std::cout << "Descriptor Set Pool destroyed successfully." << std::endl;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	if (depthImageView != VK_NULL_HANDLE) {
 		vkDestroyImageView(logicalDevices[0], depthImageView, nullptr);
 		std::cout << "Depth-Stencil ImageView destroyed." << std::endl;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	if (depthImage != VK_NULL_HANDLE) {
 		vkDestroyImage(logicalDevices[0], depthImage, nullptr);
 		std::cout << "Depth-Stencil Image destroyed." << std::endl;
 	}
 
-
-
-
-
-
-
-
-
 	if (depthImageMemory != VK_NULL_HANDLE) {
 		vkFreeMemory(logicalDevices[0], depthImageMemory, nullptr);
 		std::cout << "Depth-Stencil Image Memory freed." << std::endl;
 	}
-
-
-
-
-
-
-
-
-
-
-
 
 	uint32_t numSwapchainImageViewsDestroyed = 0;
 	for (uint32_t i = 0; i < swapchainImagesCount; i++)
@@ -1048,90 +982,40 @@ void VulkanEngine::terminate() {
 	if (numSwapchainImageViewsDestroyed)
 		std::cout << numSwapchainImageViewsDestroyed << " Swapchain ImageViews destroyed successfully." << std::endl;
 
-
-
-
-
-
-
-
-
-
 	if (renderCommandPool != VK_NULL_HANDLE) {
 		vkDestroyCommandPool(logicalDevices[0], renderCommandPool, nullptr);
 		std::cout << "Render Command Pool destroyed successfully." << std::endl;
 	}
-
-
-
-
-
-
-
-
-
 
 	if (transferCommandPool != VK_NULL_HANDLE) {
 		vkDestroyCommandPool(logicalDevices[0], transferCommandPool, nullptr);
 		std::cout << "Transfer Command Pool destroyed successfully." << std::endl;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	if (graphicsVertexShaderModule != VK_NULL_HANDLE) {
 		vkDestroyShaderModule(logicalDevices[0], graphicsVertexShaderModule, nullptr);
 		std::cout << "Graphics Vertex Shader module destroyed successfully." << std::endl;
 	}
-
-
 
 	if (graphicsFragmentShaderModule != VK_NULL_HANDLE) {
 		vkDestroyShaderModule(logicalDevices[0], graphicsFragmentShaderModule, nullptr);
 		std::cout << "Graphics Fragment Shader module destroyed successfully." << std::endl;
 	}
 
-
-
-
 	if (graphicsPipelineLayout != VK_NULL_HANDLE) {
 		vkDestroyPipelineLayout(logicalDevices[0], graphicsPipelineLayout, nullptr);
 		std::cout << "Graphics Pipeline layout destroyed successfully." << std::endl;
 	}
-
-
-
-
-
-
-
-
-
 
 	if (renderPass != VK_NULL_HANDLE) {
 		vkDestroyRenderPass(logicalDevices[0], renderPass, nullptr);
 		std::cout << "Renderpass destroyed successfully." << std::endl;
 	}
 
-
-
-
-
 	if (graphicsPipeline != VK_NULL_HANDLE) {
 		vkDestroyPipeline(logicalDevices[0], graphicsPipeline, nullptr);
 		std::cout << "Pipeline destroyed successfully." << std::endl;
 	}
-
-
-
 
 	uint32_t numFramebuffersDestroyed = 0;
 	for (uint32_t i = 0; i < swapchainImagesCount; i++)
@@ -1144,32 +1028,22 @@ void VulkanEngine::terminate() {
 	if (numFramebuffersDestroyed)
 		std::cout << numFramebuffersDestroyed << " Framebuffer(s) destroyed successfully." << std::endl;
 
-
-
-
 	if (swapchain != VK_NULL_HANDLE) {
 		vkDestroySwapchainKHR(logicalDevices[0], swapchain, nullptr);
 		std::cout << "Swapchain destroyed successfully." << std::endl;
 	}
 
-
 	destroySyncMeans();
-
-
 
 	if (logicalDevices[0] != VK_NULL_HANDLE) {
 		vkDestroyDevice(logicalDevices[0], nullptr);
 		std::cout << "Logical Device destroyed." << std::endl;
 	}
 
-
-
-
 	if (instance != VK_NULL_HANDLE) {
 		vkDestroyInstance(instance, nullptr);
 		std::cout << "Instance destroyed." << std::endl;
 	}
-
 }
 
 void VulkanEngine::createLogicalDevice() {
@@ -3229,8 +3103,6 @@ void VulkanEngine::loadMesh(const char* fileName) {
 
 	FNP_aiImportFile *_aiImportFile = (FNP_aiImportFile *)GetProcAddress(assimpModule, "aiImportFile");*/
 
-	cachedScene = (aiScene*)malloc(sizeof(aiScene));
-
 	std::string meshPath(resourcesPath);
 
 	meshPath.append(fileName);
@@ -3249,6 +3121,7 @@ void VulkanEngine::loadMesh(const char* fileName) {
 	else
 		std::cout << "Mesh file loaded successfully." << std::endl;
 
+	cachedScene = reinterpret_cast<aiScene*>(malloc(sizeof(aiScene)));
 	memcpy(cachedScene, scene, sizeof(aiScene));
 
 	std::cout << "Number of Meshes reported from Assimp: " << cachedScene->mNumMeshes << std::endl;

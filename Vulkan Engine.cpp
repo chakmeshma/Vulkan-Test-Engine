@@ -3316,18 +3316,34 @@ void VulkanEngine::commitTextures() {
 }
 
 void VulkanEngine::destroyStagingMeans() {
-	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {
-		vkDestroyBuffer(logicalDevices[0], uniformBuffers[meshIndex], nullptr);
-		vkDestroyBuffer(logicalDevices[0], vertexBuffers[meshIndex], nullptr);
-		vkDestroyBuffer(logicalDevices[0], indexBuffers[meshIndex], nullptr);
+	if (logicalDevices[0] == VK_NULL_HANDLE)
+		return;
 
-		vkDestroyImage(logicalDevices[0], colorTextureImages[meshIndex], nullptr);
-		vkDestroyImage(logicalDevices[0], normalTextureImages[meshIndex], nullptr);
-		vkDestroyImage(logicalDevices[0], specTextureImages[meshIndex], nullptr);
+	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {
+		if (uniformBuffers[meshIndex] != VK_NULL_HANDLE)
+			vkDestroyBuffer(logicalDevices[0], uniformBuffers[meshIndex], nullptr);
+
+		if (vertexBuffers[meshIndex] != VK_NULL_HANDLE)
+			vkDestroyBuffer(logicalDevices[0], vertexBuffers[meshIndex], nullptr);
+
+		if (indexBuffers[meshIndex] != VK_NULL_HANDLE)
+			vkDestroyBuffer(logicalDevices[0], indexBuffers[meshIndex], nullptr);
+
+		if (colorTextureImages[meshIndex] != VK_NULL_HANDLE)
+			vkDestroyImage(logicalDevices[0], colorTextureImages[meshIndex], nullptr);
+
+		if (normalTextureImages[meshIndex] != VK_NULL_HANDLE)
+			vkDestroyImage(logicalDevices[0], normalTextureImages[meshIndex], nullptr);
+
+		if (specTextureImages[meshIndex] != VK_NULL_HANDLE)
+			vkDestroyImage(logicalDevices[0], specTextureImages[meshIndex], nullptr);
 	}
 
-	vkFreeMemory(logicalDevices[0], uniBuffersMemory, nullptr);
-	vkFreeMemory(logicalDevices[0], uniTexturesMemory, nullptr);
+	if (uniBuffersMemory != VK_NULL_HANDLE)
+		vkFreeMemory(logicalDevices[0], uniBuffersMemory, nullptr);
+
+	if (uniTexturesMemory != VK_NULL_HANDLE)
+		vkFreeMemory(logicalDevices[0], uniTexturesMemory, nullptr);
 }
 
 //void VulkanEngine::createGraphicsNormalViewerPipeline() {

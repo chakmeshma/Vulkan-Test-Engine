@@ -2,12 +2,21 @@
 
 #include "Vulkan Engine.h"
 
+std::string getCurrentPath() {
+	TCHAR buffer[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, buffer, MAX_PATH);
+	std::wstring::size_type pos = std::string(buffer).find_last_of("\\/");
+	return (std::string(buffer).substr(0, pos) + "\\");
+}
+
 std::string makeDevilErrorText(std::string filePath) {
 	std::string errorText = "DevIL: Couldn't load texture file: ";
+	errorText += getCurrentPath();
 	errorText += filePath;
 
 	return errorText;
 }
+
 
 VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitConfiguration* initConfig) {
 	initVkObjectsNull();
@@ -3001,6 +3010,7 @@ void VulkanEngine::loadMesh(const char* fileName) {
 	if (scene == NULL)
 	{
 		std::string errorText = "Assimp: Couldn't load mesh file: ";
+		errorText.append(getCurrentPath());
 		errorText.append(meshPath);
 
 		throw VulkanException(errorText.c_str());

@@ -2,6 +2,12 @@
 
 #include "Vulkan Engine.h"
 
+std::string makeDevilErrorText(std::string filePath) {
+	std::string errorText = "DevIL: Couldn't load texture file: ";
+	errorText += filePath;
+
+	return errorText;
+}
 
 VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitConfiguration* initConfig) {
 	initVkObjectsNull();
@@ -458,7 +464,7 @@ void VulkanEngine::createAllTextures() {
 		colorFileName.append("c.png");
 
 		if (ilLoadImage(colorFileName.c_str()) != IL_TRUE)
-			std::cerr << "DevIL: Couldn't load texture file '" << colorFileName.c_str() << "'." << std::endl;
+			throw VulkanException(makeDevilErrorText(colorFileName).c_str());
 
 		void* pTextureData = ilGetData();
 
@@ -493,7 +499,7 @@ void VulkanEngine::createAllTextures() {
 		normalFileName.append("n.png");
 
 		if (ilLoadImage(normalFileName.c_str()) != IL_TRUE)
-			std::cerr << "DevIL: Couldn't load texture file '" << normalFileName.c_str() << "'." << std::endl;
+			throw VulkanException(makeDevilErrorText(normalFileName).c_str());
 
 		pTextureData = ilGetData();
 
@@ -528,7 +534,7 @@ void VulkanEngine::createAllTextures() {
 		specFileName.append("s.png");
 
 		if (ilLoadImage(specFileName.c_str()) != IL_TRUE)
-			std::cerr << "DevIL: Couldn't load texture file '" << specFileName.c_str() << "'." << std::endl;
+			throw VulkanException(makeDevilErrorText(specFileName).c_str());
 
 		pTextureData = ilGetData();
 
@@ -2993,7 +2999,12 @@ void VulkanEngine::loadMesh(const char* fileName) {
 		aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 
 	if (scene == NULL)
-		throw VulkanException("Couldn't load mesh file: ");
+	{
+		std::string errorText = "Assimp: Couldn't load mesh file: ";
+		errorText.append(meshPath);
+
+		throw VulkanException(errorText.c_str());
+	}
 	else
 		std::cout << "Mesh file loaded successfully." << std::endl;
 

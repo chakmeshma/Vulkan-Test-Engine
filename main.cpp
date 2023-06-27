@@ -312,7 +312,7 @@ unsigned __stdcall engineThreadProc(void* data) {
 		engine->calculateViewProjection();
 	}
 	catch (VulkanException e) {
-		std::cerr << e.what();
+		std::cerr << e.what() << std::endl;
 		sharedData->set_terminating(true);
 	}
 
@@ -322,7 +322,7 @@ unsigned __stdcall engineThreadProc(void* data) {
 			engine->draw();
 		}
 		catch (VulkanException e) {
-			std::cerr << e.what();
+			std::cerr << e.what() << std::endl;
 			sharedData->set_terminating(true);
 			break;
 		}

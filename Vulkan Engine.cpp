@@ -2861,17 +2861,23 @@ void VulkanEngine::createSyncMeans() {
 }
 
 void VulkanEngine::destroySyncMeans() {
+	if (logicalDevices[0] == VK_NULL_HANDLE)
+		return;
 
-	vkDestroySemaphore(logicalDevices[0], indexAcquiredSemaphore, nullptr);
-	std::cout << "Semaphore destroyed." << std::endl;
+	if (indexAcquiredSemaphore != VK_NULL_HANDLE) {
+		vkDestroySemaphore(logicalDevices[0], indexAcquiredSemaphore, nullptr);
+		std::cout << "Semaphore destroyed." << std::endl;
+	}
 
+	if (waitToPresentSemaphore != VK_NULL_HANDLE) {
+		vkDestroySemaphore(logicalDevices[0], waitToPresentSemaphore, nullptr);
+		std::cout << "Semaphore destroyed." << std::endl;
+	}
 
-	vkDestroySemaphore(logicalDevices[0], waitToPresentSemaphore, nullptr);
-	std::cout << "Semaphore destroyed." << std::endl;
-
-
-	vkDestroyFence(logicalDevices[0], queueDoneFence, nullptr);
-	std::cout << "Fence destroyed." << std::endl;
+	if (queueDoneFence != VK_NULL_HANDLE) {
+		vkDestroyFence(logicalDevices[0], queueDoneFence, nullptr);
+		std::cout << "Fence destroyed." << std::endl;
+	}
 }
 
 

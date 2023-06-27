@@ -48,27 +48,27 @@ static bool autoRotationEnabled = true;
 
 struct SharedData {
 	inline HWND get_wndHWND() {
-		wndHWNDLock.lock();
+		lock.lock();
 		HWND val = this->wndHWND;
-		wndHWNDLock.unlock();
+		lock.unlock();
 		return val;
 	}
 	inline bool get_terminating() {
-		terminatingLock.lock();
+		lock.lock();
 		bool val = this->terminating;
-		terminatingLock.unlock();
+		lock.unlock();
 		return val;
 	}
 
 	inline void set_wndHWND(HWND val) {
-		wndHWNDLock.lock();
+		lock.lock();
 		this->wndHWND = val;
-		wndHWNDLock.unlock();
+		lock.unlock();
 	}
 	inline void set_terminating(bool val) {
-		terminatingLock.lock();
+		lock.lock();
 		this->terminating = val;
-		terminatingLock.unlock();
+		lock.unlock();
 	}
 
 	InitConfiguration* initConfig = nullptr;
@@ -77,16 +77,16 @@ private:
 	HWND wndHWND = NULL;
 	bool terminating = false;
 
-	std::mutex terminatingLock{};
-	std::mutex wndHWNDLock{};
+	std::mutex lock;
 };
 
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	//short wheelDelta = 0;//TODO DO THIS
 	//float appliedWheelData = 1.0f;
-	SharedData* sharedData;
-	if (msg == WM_CREATE)
+	SharedData* sharedData = nullptr;
+
+	if (msg == WM_CREATE/* || msg == WM_NCCREATE*/)
 	{
 		CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
 		sharedData = reinterpret_cast<SharedData*>(pCreate->lpCreateParams);
@@ -194,10 +194,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //    fclose(file);
 //}
 
-HWND initWindow(HINSTANCE hInstance, bool fullscreen, int windowResolutionX, int windowResolutionY) {
+HWND initWindow(SharedData* sharedData) {
 	HWND windowHandle = NULL;
 
-	static const char g_szClassName[] = "Vulkan Test Window Class";
+	static const char windowClassName[] = "Vulkan Test Window Class";
 	static const char windowName[] = "Vulkan Test";
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -205,45 +205,45 @@ HWND initWindow(HINSTANCE hInstance, bool fullscreen, int windowResolutionX, int
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = hInstance;
+	wc.hInstance = sharedData->hInstance;
 	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wc.lpszMenuName = NULL;
-	wc.lpszClassName = g_szClassName;
+	wc.lpszClassName = windowClassName;
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 	if (!RegisterClassEx(&wc))
 		return NULL;
 
-	if (fullscreen) {
+	if (sharedData->initConfig->fullscreen) {
 		int fullscreenResolutionX = GetSystemMetrics(SM_CXSCREEN);
 		int fullscreenResolutionY = GetSystemMetrics(SM_CYSCREEN);
 
 		windowHandle = CreateWindowEx(
 			0,
-			g_szClassName,
+			windowClassName,
 			windowName,
 			WS_POPUP,
 			0, 0, fullscreenResolutionX, fullscreenResolutionY,
-			NULL, NULL, hInstance, NULL);
+			NULL, NULL, sharedData->hInstance, sharedData);
 	}
 	else {
 		DWORD dwStyle = WS_OVERLAPPEDWINDOW ^ (WS_THICKFRAME | WS_MAXIMIZEBOX);
 		DWORD dwExStyle = WS_EX_CLIENTEDGE;
 
-		RECT windowRect{ 0,0,windowResolutionX, windowResolutionY };
+		RECT windowRect{ 0,0,sharedData->initConfig->windowResolutionX, sharedData->initConfig->windowResolutionY };
 
 		AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
 		windowHandle = CreateWindowEx(
 			dwExStyle,
-			g_szClassName,
+			windowClassName,
 			windowName,
 			dwStyle,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
-			NULL, NULL, hInstance, NULL);
+			NULL, NULL, sharedData->hInstance, sharedData);
 	}
 
 	return windowHandle;
@@ -254,10 +254,7 @@ unsigned __stdcall windowThreadProc(void* data) {
 
 	bool fullscreen = sharedData->initConfig->fullscreen;
 
-	HWND hwnd = initWindow(sharedData->hInstance,
-		fullscreen,
-		sharedData->initConfig->windowResolutionX,
-		sharedData->initConfig->windowResolutionY);
+	HWND hwnd = initWindow(sharedData);
 
 	if (hwnd != NULL) {
 		ShowWindow(hwnd, SW_SHOWNORMAL);
@@ -307,6 +304,9 @@ unsigned __stdcall engineThreadProc(void* data) {
 		return 0;
 
 	try {
+		ilInit();
+		std::cout << "DevIL library inited." << std::endl;
+
 		engine = new VulkanEngine(sharedData->hInstance, sharedData->get_wndHWND(), sharedData->initConfig);
 		engine->calculateViewProjection();
 	}
@@ -339,7 +339,7 @@ int main() {
 	SharedData sharedData;
 
 	try {
-		sharedData.initConfig = &InitConfiguration("settings.ini");
+		sharedData.initConfig = new InitConfiguration("settings.ini");
 	}
 	catch (...) {
 		std::cerr << "Couldn't load settings.ini" << std::endl;
@@ -367,6 +367,10 @@ int main() {
 	CloseHandle(hWindowThread);
 
 	//MAGIC ENDS
+
+	delete sharedData.initConfig;
+
+	system("pause");
 
 	return EXIT_SUCCESS;
 }

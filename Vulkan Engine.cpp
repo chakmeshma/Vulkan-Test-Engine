@@ -20,8 +20,6 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitCon
 
 	this->hInstance = hInstance;
 	this->windowHandle = windowHandle;
-
-	init();
 }
 
 void VulkanEngine::initVkObjectsNull() {

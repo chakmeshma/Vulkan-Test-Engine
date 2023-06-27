@@ -84,6 +84,8 @@ public:
 
 	void initVkObjectsNull();
 
+	void init();
+
 	void getInstanceExtensions();
 
 	void getDeviceExtensions();
@@ -280,8 +282,6 @@ private:
 	LARGE_INTEGER t1, t2;           // ticks
 	double elapsedTime;
 
-
-	void init();
 
 	void createInstance();
 

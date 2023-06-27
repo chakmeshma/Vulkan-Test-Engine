@@ -308,6 +308,7 @@ unsigned __stdcall engineThreadProc(void* data) {
 		std::cout << "DevIL library inited." << std::endl;
 
 		engine = new VulkanEngine(sharedData->hInstance, sharedData->get_wndHWND(), sharedData->initConfig);
+		engine->init();
 		engine->calculateViewProjection();
 	}
 	catch (VulkanException e) {

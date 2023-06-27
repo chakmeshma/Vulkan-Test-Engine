@@ -40,24 +40,24 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitCon
 void VulkanEngine::initVkObjectsNull() {
 
 	NULL_HANDLE_INIT_ARRAY(colorTextureImages, MAX_COLOR_TEXTURE_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(colorTextureImagesDevice, MAX_COLOR_TEXTURE_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(colorTextureViews, MAX_COLOR_TEXTURE_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(meshDescriptorSets, MAX_MESHES)
+		NULL_HANDLE_INIT_ARRAY(colorTextureImagesDevice, MAX_COLOR_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(colorTextureViews, MAX_COLOR_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(meshDescriptorSets, MAX_MESHES)
 
-	NULL_HANDLE_INIT_ARRAY(uniformBuffers, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(uniformBuffersDevice, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(vertexBuffersDevice, MAX_VERTEX_BUFFER_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(vertexBuffers, MAX_VERTEX_BUFFER_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(indexBuffersDevice, MAX_INDEX_BUFFER_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(indexBuffers, MAX_INDEX_BUFFER_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(uniformBuffers, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(uniformBuffersDevice, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(vertexBuffersDevice, MAX_VERTEX_BUFFER_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(vertexBuffers, MAX_VERTEX_BUFFER_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(indexBuffersDevice, MAX_INDEX_BUFFER_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(indexBuffers, MAX_INDEX_BUFFER_ARRAY_SIZE)
 
-	NULL_HANDLE_INIT_ARRAY(specTextureViews, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(specTextureImages, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(specTextureViews, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(specTextureImages, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
 
-	NULL_HANDLE_INIT_ARRAY(normalTextureImagesDevice, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(normalTextureImages, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(normalTextureViews, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
-	NULL_HANDLE_INIT_ARRAY(specTextureImagesDevice, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(normalTextureImagesDevice, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(normalTextureImages, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(normalTextureViews, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
+		NULL_HANDLE_INIT_ARRAY(specTextureImagesDevice, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
 }
 
 VulkanEngine::~VulkanEngine() noexcept(false) {
@@ -1730,7 +1730,7 @@ void VulkanEngine::createSparseImage() {
 
 	NULL_HANDLE_INIT_ARRAY(sparseImages, 1)
 
-	VkResult result = vkCreateImage(logicalDevices[0], &sparseImageCreateInfo, nullptr, sparseImages);
+		VkResult result = vkCreateImage(logicalDevices[0], &sparseImageCreateInfo, nullptr, sparseImages);
 
 	switch (result) {
 	case VK_SUCCESS:
@@ -2066,12 +2066,12 @@ void VulkanEngine::createSwapchain() {
 
 	NULL_HANDLE_INIT_ARRAY(swapchainImages, swapchainImagesCount)
 
-	if ((swapchainImageResult = vkGetSwapchainImagesKHR(logicalDevices[0], swapchain, &swapchainImagesCount,
-		swapchainImages)) == VK_SUCCESS) {
-		std::cout << "Swapchain images obtained successfully." << std::endl;
-	}
-	else
-		throw VulkanException("Couldn't get swapchain images.");
+		if ((swapchainImageResult = vkGetSwapchainImagesKHR(logicalDevices[0], swapchain, &swapchainImagesCount,
+			swapchainImages)) == VK_SUCCESS) {
+			std::cout << "Swapchain images obtained successfully." << std::endl;
+		}
+		else
+			throw VulkanException("Couldn't get swapchain images.");
 }
 
 uint32_t VulkanEngine::acquireNextFramebufferImageIndex() {
@@ -2230,26 +2230,26 @@ void VulkanEngine::createFramebuffers() {
 
 	NULL_HANDLE_INIT_ARRAY(framebuffers, swapchainImagesCount)
 
-	for (uint32_t i = 0; i < swapchainImagesCount; i++) {
-		VkImageView attachments[2] = { swapchainImageViews[i], depthImageView };
+		for (uint32_t i = 0; i < swapchainImagesCount; i++) {
+			VkImageView attachments[2] = { swapchainImageViews[i], depthImageView };
 
-		VkFramebufferCreateInfo framebufferCreateInfo = {};
+			VkFramebufferCreateInfo framebufferCreateInfo = {};
 
-		framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferCreateInfo.pNext = nullptr;
-		framebufferCreateInfo.flags = 0;
-		framebufferCreateInfo.renderPass = renderPass;
-		framebufferCreateInfo.attachmentCount = 2;
-		framebufferCreateInfo.pAttachments = attachments;
-		framebufferCreateInfo.width = surfaceCapabilities.currentExtent.width;
-		framebufferCreateInfo.height = surfaceCapabilities.currentExtent.height;
-		framebufferCreateInfo.layers = 1;
+			framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			framebufferCreateInfo.pNext = nullptr;
+			framebufferCreateInfo.flags = 0;
+			framebufferCreateInfo.renderPass = renderPass;
+			framebufferCreateInfo.attachmentCount = 2;
+			framebufferCreateInfo.pAttachments = attachments;
+			framebufferCreateInfo.width = surfaceCapabilities.currentExtent.width;
+			framebufferCreateInfo.height = surfaceCapabilities.currentExtent.height;
+			framebufferCreateInfo.layers = 1;
 
-		VkResult result = vkCreateFramebuffer(logicalDevices[0], &framebufferCreateInfo, nullptr, framebuffers + i);
+			VkResult result = vkCreateFramebuffer(logicalDevices[0], &framebufferCreateInfo, nullptr, framebuffers + i);
 
-		if (result != VK_SUCCESS)
-			throw VulkanException("Couldn't create framebuffer.");
-	}
+			if (result != VK_SUCCESS)
+				throw VulkanException("Couldn't create framebuffer.");
+		}
 
 	std::cout << "Framebuffer(s) created successfully." << std::endl;
 }
@@ -2260,34 +2260,34 @@ void VulkanEngine::createSwapchainImageViews() {
 
 	NULL_HANDLE_INIT_ARRAY(swapchainImageViews, swapchainImagesCount)
 
-	for (uint32_t i = 0; i < swapchainImagesCount; i++) {
-		VkImage swapchainImage = swapchainImages[i];
+		for (uint32_t i = 0; i < swapchainImagesCount; i++) {
+			VkImage swapchainImage = swapchainImages[i];
 
-		VkImageViewCreateInfo swapchainImageViewCreateInfo = {};
-		swapchainImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		swapchainImageViewCreateInfo.pNext = nullptr;
-		swapchainImageViewCreateInfo.flags = 0;
-		swapchainImageViewCreateInfo.image = swapchainImages[i];
-		swapchainImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		swapchainImageViewCreateInfo.format = surfaceImageFormat;
-		swapchainImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
-		swapchainImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
-		swapchainImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
-		swapchainImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
-		swapchainImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		swapchainImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-		swapchainImageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-		swapchainImageViewCreateInfo.subresourceRange.layerCount = 1;
-		swapchainImageViewCreateInfo.subresourceRange.levelCount = 1;
+			VkImageViewCreateInfo swapchainImageViewCreateInfo = {};
+			swapchainImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			swapchainImageViewCreateInfo.pNext = nullptr;
+			swapchainImageViewCreateInfo.flags = 0;
+			swapchainImageViewCreateInfo.image = swapchainImages[i];
+			swapchainImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			swapchainImageViewCreateInfo.format = surfaceImageFormat;
+			swapchainImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+			swapchainImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+			swapchainImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+			swapchainImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+			swapchainImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			swapchainImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+			swapchainImageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+			swapchainImageViewCreateInfo.subresourceRange.layerCount = 1;
+			swapchainImageViewCreateInfo.subresourceRange.levelCount = 1;
 
-		VkResult result = vkCreateImageView(logicalDevices[0], &swapchainImageViewCreateInfo, nullptr,
-			swapchainImageViews + i);
+			VkResult result = vkCreateImageView(logicalDevices[0], &swapchainImageViewCreateInfo, nullptr,
+				swapchainImageViews + i);
 
-		if (result == VK_SUCCESS)
-			std::cout << "ImageView for swap chain image (" << i << ") created successfully." << std::endl;
-		else
-			throw VulkanException("ImageView creation failed.");
-	}
+			if (result == VK_SUCCESS)
+				std::cout << "ImageView for swap chain image (" << i << ") created successfully." << std::endl;
+			else
+				throw VulkanException("ImageView creation failed.");
+		}
 
 }
 
@@ -2515,8 +2515,20 @@ void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShad
 
 	if (compileShader) {
 		std::string shaderCode = loadShaderCode(shaderPath.c_str());
-		std::vector<uint32_t> shaderBinaryVector = compileGLSLShader(shaderCode.c_str(), shaderType);
-		writeShaderBinaryToFile(reinterpret_cast<const void*>(shaderBinaryVector.data()), shaderBinaryVector.size() * sizeof(uint32_t), compiledShaderFileName.c_str());
+
+		try {
+			std::vector<uint32_t> shaderBinaryVector = compileGLSLShader(shaderCode.c_str(), shaderType);
+			writeShaderBinaryToFile(reinterpret_cast<const void*>(shaderBinaryVector.data()), shaderBinaryVector.size() * sizeof(uint32_t), compiledShaderFileName.c_str());
+		}
+		catch (VulkanException e) {
+			std::string errorText = "shaderc: Couldn't compile shader file: ";
+			errorText.append(getCurrentPath());
+			errorText.append(shaderPath);
+			errorText.append("\n\t");
+			errorText.append(e.what());
+			throw VulkanException(errorText.c_str());
+		}
+
 	}
 
 	void* shaderBinary = nullptr;
@@ -2543,6 +2555,7 @@ std::string VulkanEngine::loadShaderCode(const char* fileName) {
 	if (!checkFileExist(fileName))
 	{
 		std::string exceptionWhat = "Couldn't open shader file ";
+		exceptionWhat.append(getCurrentPath());
 		exceptionWhat.append(fileName);
 		throw VulkanException(exceptionWhat.c_str());
 	}

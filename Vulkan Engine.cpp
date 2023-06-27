@@ -1883,7 +1883,7 @@ void VulkanEngine::getQueues() {
 	vkGetDeviceQueue(logicalDevices[0], graphicsQueueFamilyIndex, 0, &graphicsQueue);
 
 	if (graphicsQueue == VK_NULL_HANDLE) {
-		throw "Couldn't obtain graphics queue from device.";
+		throw VulkanException("Couldn't obtain graphics queue from device.");
 	}
 	else {
 		std::cout << "Graphics Queue obtained successfully.\n";
@@ -1892,7 +1892,7 @@ void VulkanEngine::getQueues() {
 	vkGetDeviceQueue(logicalDevices[0], transferQueueFamilyIndex, 0, &transferQueue);
 
 	if (transferQueue == VK_NULL_HANDLE) {
-		throw "Couldn't obtain transfer queue from device.";
+		throw VulkanException("Couldn't obtain transfer queue from device.");
 	}
 	else {
 		std::cout << "Transfer Queue obtained successfully.\n";

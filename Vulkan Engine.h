@@ -339,6 +339,18 @@ private:
 
 	void createGraphicsPipeline();
 
+	static void writeShaderBinaryToFile(const void* shaderBinary, size_t shaderBinarySize, const char* fileName);
+
+	static size_t readShaderBinaryFromFile(void*& shaderBinary, const char* fileName);
+
+	static bool checkFileExist(const char* fileName);
+
+	static std::string getCurrentPath();
+
+	static std::string makeDevilErrorText(std::string filePath);
+
+	static int getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties);
+
 	void createPipelineAndDescriptorSetsLayout();
 
 	void render(uint32_t drawableImageIndex);

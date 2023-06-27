@@ -2,14 +2,14 @@
 
 #include "Vulkan Engine.h"
 
-std::string getCurrentPath() {
+std::string VulkanEngine::getCurrentPath() {
 	TCHAR buffer[MAX_PATH] = { 0 };
 	GetModuleFileName(NULL, buffer, MAX_PATH);
 	std::wstring::size_type pos = std::string(buffer).find_last_of("\\/");
 	return (std::string(buffer).substr(0, pos) + "\\");
 }
 
-std::string makeDevilErrorText(std::string filePath) {
+std::string VulkanEngine::makeDevilErrorText(std::string filePath) {
 	std::string errorText = "DevIL: Couldn't load texture file: ";
 	errorText += getCurrentPath();
 	errorText += filePath;
@@ -678,7 +678,7 @@ void VulkanEngine::commitBuffers() {
 	vkFreeCommandBuffers(logicalDevices[0], transferCommandPool, 1, &commandBuffer);
 }
 
-int getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties) {
+int VulkanEngine::getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties) {
 	VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
 	if (counts & VK_SAMPLE_COUNT_64_BIT) { return 64; }
 	if (counts & VK_SAMPLE_COUNT_32_BIT) { return 32; }
@@ -2458,7 +2458,7 @@ void VulkanEngine::createGraphicsPipeline() {
 //typedef shaderc_compiler_t (*_shaderc_compiler_initialize_t)();
 //typedef shaderc_compile_into_spv
 
-void writeShaderBinaryToFile(const void* shaderBinary, size_t shaderBinarySize, const char* fileName)
+void VulkanEngine::writeShaderBinaryToFile(const void* shaderBinary, size_t shaderBinarySize, const char* fileName)
 {
 	FILE* fp;
 	fp = fopen(fileName, "wb");
@@ -2469,7 +2469,7 @@ void writeShaderBinaryToFile(const void* shaderBinary, size_t shaderBinarySize, 
 	fclose(fp);
 }
 
-size_t readShaderBinaryFromFile(void*& shaderBinary, const char* fileName) {
+size_t VulkanEngine::readShaderBinaryFromFile(void*& shaderBinary, const char* fileName) {
 	size_t readSize = 0;
 
 	FILE* fp;
@@ -2489,7 +2489,7 @@ size_t readShaderBinaryFromFile(void*& shaderBinary, const char* fileName) {
 	return readSize;
 }
 
-bool checkFileExist(const char* fileName) {
+bool VulkanEngine::checkFileExist(const char* fileName) {
 	FILE* fp = fopen(fileName, "r");
 	bool is_exist = false;
 	if (fp != NULL)
@@ -2499,8 +2499,6 @@ bool checkFileExist(const char* fileName) {
 	}
 	return is_exist;
 }
-
-//#define COMPILE_SHADER
 
 void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShaderModule* shaderModule,
 	shaderc_shader_kind shaderType) {

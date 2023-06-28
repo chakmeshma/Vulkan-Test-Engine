@@ -106,6 +106,7 @@ public:
 	void calculateViewProjection();
 
 	float getElapsedTime();
+	void resetTimer();
 
 	float focusPitch = 0.0f;
 	float focusYaw = 0.0f;

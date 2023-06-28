@@ -30,6 +30,7 @@
 //static float wheelZoomSpeed = .0001f;
 //static float autoRotationSpeed = 0.000001f;
 static bool autoRotationEnabled = true;
+static bool resetTimer = true;
 
 
 //BOOL WINAPI closeHandler(DWORD dwCtrlType) {
@@ -172,6 +173,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			//	break;
 	case WM_KEYDOWN:
 		if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
+		resetTimer = true;
 		break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -322,6 +324,10 @@ unsigned __stdcall engineThreadProc(void* data) {
 
 	while (engine != nullptr && !sharedData->get_terminating()) {
 		try {
+			if (resetTimer) {
+				engine->resetTimer();
+				resetTimer = false;
+			}
 			if (autoRotationEnabled) engine->cameraRotate();
 			engine->draw();
 		}

@@ -3670,3 +3670,8 @@ float VulkanEngine::getElapsedTime()
 
 	return float(elapsed.QuadPart);
 }
+
+void VulkanEngine::resetTimer()
+{
+	getElapsedTime();
+}

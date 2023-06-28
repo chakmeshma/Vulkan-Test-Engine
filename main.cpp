@@ -349,9 +349,11 @@ int main() {
 	//SetConsoleCtrlHandler(closeHandler, TRUE); //TODO handle this
 
 	SharedData sharedData;
+	bool keepConsoleOpen;
 
 	try {
 		sharedData.initConfig = new InitConfiguration("settings.ini");
+		keepConsoleOpen = sharedData.initConfig->keepConsoleOpen;
 	}
 	catch (...) {
 		PRINT_ERROR("Couldn't load settings.ini");
@@ -382,7 +384,8 @@ int main() {
 
 	delete sharedData.initConfig;
 
-	system("pause");
+	if (keepConsoleOpen)
+		system("pause");
 
 	return EXIT_SUCCESS;
 }

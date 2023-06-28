@@ -28,6 +28,7 @@ struct InitConfiguration {
 	std::string meshFileName;
 	std::string resourceDirName;
 	std::vector<float> clearColor;
+	bool keepConsoleOpen;
 
 	InitConfiguration(const char* configFileName) {
 		void* iniReader = iniReaderInstantiate(configFileName);
@@ -46,6 +47,7 @@ struct InitConfiguration {
 		meshFileName = iniReaderGetStringDefault(iniReader, "Resource", "MeshFileNameOverride", "mesh");
 		resourceDirName = iniReaderGetStringDefault(iniReader, "Resource", "ResourceDirNameOverride", "Resources");
 		clearColor = iniReaderGetFloatVector(iniReader, "Misc", "ClearColor");
+		keepConsoleOpen = iniReaderGetBool(iniReader, "Misc", "KeepConsoleOpen");
 
 		iniReaderDestroy(iniReader);
 	}

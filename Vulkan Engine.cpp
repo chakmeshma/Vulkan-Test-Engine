@@ -19,7 +19,7 @@ std::string VulkanEngine::makeDevilErrorText(std::string filePath) {
 
 
 VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitConfiguration* initConfig) {
-	initVkObjectsNull();
+	initSizedVkObjectsNull();
 
 	this->cameraDistance = -initConfig->distanceCamera;
 	this->fovAngle = initConfig->verticalFOV;
@@ -37,27 +37,27 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitCon
 	this->windowHandle = windowHandle;
 }
 
-void VulkanEngine::initVkObjectsNull() {
+void VulkanEngine::initSizedVkObjectsNull() {
 
-	NULL_HANDLE_INIT_ARRAY(colorTextureImages, MAX_COLOR_TEXTURE_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(colorTextureImagesDevice, MAX_COLOR_TEXTURE_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(colorTextureViews, MAX_COLOR_TEXTURE_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(meshDescriptorSets, MAX_MESHES)
+	NULL_HANDLE_INIT_ARRAY(colorTextureImages, MAX_COLOR_TEXTURE_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(colorTextureImagesDevice, MAX_COLOR_TEXTURE_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(colorTextureViews, MAX_COLOR_TEXTURE_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(meshDescriptorSets, MAX_MESHES);
 
-		NULL_HANDLE_INIT_ARRAY(uniformBuffers, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(uniformBuffersDevice, MAX_UNIFORM_BUFFER_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(vertexBuffersDevice, MAX_VERTEX_BUFFER_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(vertexBuffers, MAX_VERTEX_BUFFER_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(indexBuffersDevice, MAX_INDEX_BUFFER_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(indexBuffers, MAX_INDEX_BUFFER_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(uniformBuffers, MAX_UNIFORM_BUFFER_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(uniformBuffersDevice, MAX_UNIFORM_BUFFER_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(vertexBuffersDevice, MAX_VERTEX_BUFFER_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(vertexBuffers, MAX_VERTEX_BUFFER_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(indexBuffersDevice, MAX_INDEX_BUFFER_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(indexBuffers, MAX_INDEX_BUFFER_ARRAY_SIZE);
 
-		NULL_HANDLE_INIT_ARRAY(specTextureViews, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(specTextureImages, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(specTextureViews, MAX_SPECULAR_TEXTURE_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(specTextureImages, MAX_SPECULAR_TEXTURE_ARRAY_SIZE);
 
-		NULL_HANDLE_INIT_ARRAY(normalTextureImagesDevice, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(normalTextureImages, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(normalTextureViews, MAX_NORMAL_TEXTURE_ARRAY_SIZE)
-		NULL_HANDLE_INIT_ARRAY(specTextureImagesDevice, MAX_SPECULAR_TEXTURE_ARRAY_SIZE)
+	NULL_HANDLE_INIT_ARRAY(normalTextureImagesDevice, MAX_NORMAL_TEXTURE_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(normalTextureImages, MAX_NORMAL_TEXTURE_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(normalTextureViews, MAX_NORMAL_TEXTURE_ARRAY_SIZE);
+	NULL_HANDLE_INIT_ARRAY(specTextureImagesDevice, MAX_SPECULAR_TEXTURE_ARRAY_SIZE);
 }
 
 VulkanEngine::~VulkanEngine() noexcept(false) {
@@ -1824,9 +1824,9 @@ void VulkanEngine::createSparseImage() {
 
 	sparseImages = new VkImage[1];
 
-	NULL_HANDLE_INIT_ARRAY(sparseImages, 1)
+	NULL_HANDLE_INIT_ARRAY(sparseImages, 1);
 
-		VkResult result = vkCreateImage(logicalDevices[0], &sparseImageCreateInfo, nullptr, sparseImages);
+	VkResult result = vkCreateImage(logicalDevices[0], &sparseImageCreateInfo, nullptr, sparseImages);
 
 	switch (result) {
 	case VK_SUCCESS:
@@ -2159,18 +2159,18 @@ void VulkanEngine::createSwapchain() {
 		throw VulkanException("Couldn't get swapchain images.");
 
 	swapchainImages = new VkImage[swapchainImagesCount];
-	NULL_HANDLE_INIT_ARRAY(swapchainImages, swapchainImagesCount)
+	NULL_HANDLE_INIT_ARRAY(swapchainImages, swapchainImagesCount);
 	swapchainImageViews = new VkImageView[swapchainImagesCount];
-	NULL_HANDLE_INIT_ARRAY(swapchainImageViews, swapchainImagesCount)
+	NULL_HANDLE_INIT_ARRAY(swapchainImageViews, swapchainImagesCount);
 	framebuffers = new VkFramebuffer[swapchainImagesCount];
-	NULL_HANDLE_INIT_ARRAY(framebuffers, swapchainImagesCount)
+	NULL_HANDLE_INIT_ARRAY(framebuffers, swapchainImagesCount);
 
-		if ((swapchainImageResult = vkGetSwapchainImagesKHR(logicalDevices[0], swapchain, &swapchainImagesCount,
-			swapchainImages)) == VK_SUCCESS) {
-			std::cout << "Swapchain images obtained successfully." << std::endl;
-		}
-		else
-			throw VulkanException("Couldn't get swapchain images.");
+	if ((swapchainImageResult = vkGetSwapchainImagesKHR(logicalDevices[0], swapchain, &swapchainImagesCount,
+		swapchainImages)) == VK_SUCCESS) {
+		std::cout << "Swapchain images obtained successfully." << std::endl;
+	}
+	else
+		throw VulkanException("Couldn't get swapchain images.");
 }
 
 uint32_t VulkanEngine::acquireNextFramebufferImageIndex() {
@@ -2325,26 +2325,26 @@ void VulkanEngine::createRenderpass() {
 }
 
 void VulkanEngine::createFramebuffers() {
-		for (uint32_t i = 0; i < swapchainImagesCount; i++) {
-			VkImageView attachments[2] = { swapchainImageViews[i], depthImageView };
+	for (uint32_t i = 0; i < swapchainImagesCount; i++) {
+		VkImageView attachments[2] = { swapchainImageViews[i], depthImageView };
 
-			VkFramebufferCreateInfo framebufferCreateInfo = {};
+		VkFramebufferCreateInfo framebufferCreateInfo = {};
 
-			framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferCreateInfo.pNext = nullptr;
-			framebufferCreateInfo.flags = 0;
-			framebufferCreateInfo.renderPass = renderPass;
-			framebufferCreateInfo.attachmentCount = 2;
-			framebufferCreateInfo.pAttachments = attachments;
-			framebufferCreateInfo.width = surfaceCapabilities.currentExtent.width;
-			framebufferCreateInfo.height = surfaceCapabilities.currentExtent.height;
-			framebufferCreateInfo.layers = 1;
+		framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferCreateInfo.pNext = nullptr;
+		framebufferCreateInfo.flags = 0;
+		framebufferCreateInfo.renderPass = renderPass;
+		framebufferCreateInfo.attachmentCount = 2;
+		framebufferCreateInfo.pAttachments = attachments;
+		framebufferCreateInfo.width = surfaceCapabilities.currentExtent.width;
+		framebufferCreateInfo.height = surfaceCapabilities.currentExtent.height;
+		framebufferCreateInfo.layers = 1;
 
-			VkResult result = vkCreateFramebuffer(logicalDevices[0], &framebufferCreateInfo, nullptr, framebuffers + i);
+		VkResult result = vkCreateFramebuffer(logicalDevices[0], &framebufferCreateInfo, nullptr, framebuffers + i);
 
-			if (result != VK_SUCCESS)
-				throw VulkanException("Couldn't create framebuffer.");
-		}
+		if (result != VK_SUCCESS)
+			throw VulkanException("Couldn't create framebuffer.");
+	}
 
 	std::cout << "Framebuffer(s) created successfully." << std::endl;
 }

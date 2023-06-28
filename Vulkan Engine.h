@@ -26,7 +26,7 @@
 #define PRINT_QUEUE_FAMILIES
 #endif
 
-#define NULL_HANDLE_INIT_ARRAY(X, SIZE) for (uint32_t i = 0; i < SIZE; i++) X[i] = VK_NULL_HANDLE;
+#define NULL_HANDLE_INIT_ARRAY(X, SIZE) for (uint32_t i = 0; i < SIZE; i++) X[i] = VK_NULL_HANDLE
 
 #include <vulkan/vulkan.h>
 #include <stdlib.h>
@@ -82,7 +82,7 @@ public:
 
 	~VulkanEngine() noexcept(false);
 
-	void initVkObjectsNull();
+	void initSizedVkObjectsNull();
 
 	void init();
 

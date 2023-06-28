@@ -413,5 +413,6 @@ private:
 	std::string meshFileName;
 	std::vector<float> clearColor;
 	std::string resourcesPath;
+	bool recompileShaders;
 };
 

@@ -29,6 +29,7 @@ struct InitConfiguration {
 	std::string resourceDirName;
 	std::vector<float> clearColor;
 	bool keepConsoleOpen;
+	bool recompileShaders;
 
 	InitConfiguration(const char* configFileName) {
 		void* iniReader = iniReaderInstantiate(configFileName);
@@ -48,6 +49,7 @@ struct InitConfiguration {
 		resourceDirName = iniReaderGetStringDefault(iniReader, "Resource", "ResourceDirNameOverride", "Resources");
 		clearColor = iniReaderGetFloatVector(iniReader, "Misc", "ClearColor");
 		keepConsoleOpen = iniReaderGetBool(iniReader, "Misc", "KeepConsoleOpen");
+		recompileShaders = iniReaderGetBool(iniReader, "Misc", "InvalidateShadersCache");
 
 		iniReaderDestroy(iniReader);
 	}

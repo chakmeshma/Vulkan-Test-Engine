@@ -32,6 +32,7 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitCon
 	this->resourcesPath.append("\\");
 	this->clearColor = initConfig->clearColor;
 	this->autoRotationSpeed = initConfig->speedAutoRotation;
+	this->recompileShaders = initConfig->recompileShaders;
 
 	this->hInstance = hInstance;
 	this->windowHandle = windowHandle;
@@ -2599,7 +2600,7 @@ void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShad
 	std::string compiledShaderFileName(shaderFileName);
 	compiledShaderFileName.append(".compiled");
 
-	bool compileShader = !checkFileExist(compiledShaderFileName.c_str());
+	bool compileShader = recompileShaders || !checkFileExist(compiledShaderFileName.c_str());
 
 	if (compileShader) {
 		std::string shaderCode = loadShaderCode(shaderPath.c_str());

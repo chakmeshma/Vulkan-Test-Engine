@@ -8,7 +8,7 @@
 
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
-
+#define PRINT_ERROR(X) std::cerr << "Error: " << X << std::endl
 //#define _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH() WINDOW_RESOLUTION_WIDTH
 //#define _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT() WINDOW_RESOLUTION_HEIGHT
 //#define _MAKE_WINDOW_NAME_GET_NAME() APP_WINDOW_NAME
@@ -295,7 +295,7 @@ unsigned __stdcall windowThreadProc(void* data) {
 	}
 	else
 	{
-		std::cerr << "Couldn't create Window." << std::endl;
+		PRINT_ERROR("Couldn't create Window.");
 		sharedData->set_terminating(true);
 	}
 
@@ -318,7 +318,7 @@ unsigned __stdcall engineThreadProc(void* data) {
 		engine->calculateViewProjection();
 	}
 	catch (VulkanException e) {
-		std::cerr << e.what() << std::endl;
+		PRINT_ERROR(e.what());
 		sharedData->set_terminating(true);
 	}
 
@@ -332,7 +332,7 @@ unsigned __stdcall engineThreadProc(void* data) {
 			engine->draw();
 		}
 		catch (VulkanException e) {
-			std::cerr << e.what() << std::endl;
+			PRINT_ERROR(e.what());
 			sharedData->set_terminating(true);
 			break;
 		}
@@ -355,7 +355,7 @@ int main() {
 		sharedData.initConfig = new InitConfiguration("settings.ini");
 	}
 	catch (...) {
-		std::cerr << "Couldn't load settings.ini" << std::endl;
+		PRINT_ERROR("Couldn't load settings.ini");
 
 		system("pause");
 

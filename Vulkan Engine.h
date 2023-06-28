@@ -18,10 +18,6 @@
 #define PRINT_ENUMERATIONS
 
 #ifdef PRINT_ENUMERATIONS
-#define PRINT_INSTANCE_EXTENSIONS
-#define PRINT_DEVICE_EXTENSIONS
-#define PRINT_INSTANCE_LAYERS
-#define PRINT_DEVICE_LAYERS
 #define PRINT_MEMORY_TYPES
 #define PRINT_QUEUE_FAMILIES
 #endif
@@ -417,5 +413,6 @@ private:
 	std::vector<float> clearColor;
 	std::string resourcesPath;
 	bool recompileShaders;
+	bool printLayerAndExtensions;
 };
 

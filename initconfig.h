@@ -30,6 +30,7 @@ struct InitConfiguration {
 	std::vector<float> clearColor;
 	bool keepConsoleOpen;
 	bool recompileShaders;
+	bool printLayersAndExtensions;
 
 	InitConfiguration(const char* configFileName) {
 		void* iniReader = iniReaderInstantiate(configFileName);
@@ -50,6 +51,7 @@ struct InitConfiguration {
 		clearColor = iniReaderGetFloatVector(iniReader, "Misc", "ClearColor");
 		keepConsoleOpen = iniReaderGetBool(iniReader, "Misc", "KeepConsoleOpen");
 		recompileShaders = iniReaderGetBool(iniReader, "Misc", "InvalidateShadersCache");
+		printLayersAndExtensions = iniReaderGetBool(iniReader, "Misc", "PrintLayersAndExtensions");
 
 		iniReaderDestroy(iniReader);
 	}

@@ -34,6 +34,7 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitCon
 	this->autoRotationSpeed = initConfig->speedAutoRotation;
 	this->zoomSpeed = initConfig->speedZoom;
 	this->recompileShaders = initConfig->recompileShaders;
+	this->printLayerAndExtensions = initConfig->printLayersAndExtensions;
 
 	this->hInstance = hInstance;
 	this->windowHandle = windowHandle;
@@ -73,14 +74,14 @@ void VulkanEngine::getInstanceExtensions() {
 
 	vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionsCount, instanceExtensions.data());
 
-#ifdef PRINT_INSTANCE_EXTENSIONS
-	std::cout << "Instance Extensions:\n";
+	if (printLayerAndExtensions) {
+		std::cout << "Instance Extensions:\n";
 
-	for (uint32_t i = 0; i < instanceExtensionsCount; i++) {
-		std::cout << "\t" << instanceExtensions[i].extensionName << "("
-			<< std::to_string(instanceExtensions[i].specVersion) << ")\n";
+		for (uint32_t i = 0; i < instanceExtensionsCount; i++) {
+			std::cout << "\t" << instanceExtensions[i].extensionName << "("
+				<< std::to_string(instanceExtensions[i].specVersion) << ")\n";
+		}
 	}
-#endif
 }
 
 void VulkanEngine::getDeviceExtensions() {
@@ -89,14 +90,14 @@ void VulkanEngine::getDeviceExtensions() {
 	deviceExtensions.resize(deviceExtensionsCount);
 
 	vkEnumerateDeviceExtensionProperties(physicalDevices[0], nullptr, &deviceExtensionsCount, deviceExtensions.data());
-#ifdef PRINT_DEVICE_EXTENSIONS
-	std::cout << "Device Extensions:\n";
+	if (printLayerAndExtensions) {
+		std::cout << "Device Extensions:\n";
 
-	for (uint32_t i = 0; i < deviceExtensionsCount; i++) {
-		std::cout << "\t" << deviceExtensions[i].extensionName << "(" << std::to_string(deviceExtensions[0].specVersion)
-			<< ")\n";
+		for (uint32_t i = 0; i < deviceExtensionsCount; i++) {
+			std::cout << "\t" << deviceExtensions[i].extensionName << "(" << std::to_string(deviceExtensions[0].specVersion)
+				<< ")\n";
+		}
 	}
-#endif
 }
 
 std::string VulkanEngine::getVersionString(uint32_t versionBitmask) {
@@ -292,17 +293,17 @@ void VulkanEngine::getInstanceLayers() {
 
 	vkEnumerateInstanceLayerProperties(&layerPropertiesCount, layerProperties.data());
 
-#ifdef PRINT_INSTANCE_LAYERS
-	std::cout << "Instance Layers:\n";
+	if (printLayerAndExtensions) {
+		std::cout << "Instance Layers:\n";
 
-	for (uint32_t i = 0; i < layerPropertiesCount; i++) {
-		std::cout << "\tLayer #" << std::to_string(i) << std::endl;
-		std::cout << "\t\tName:\t" << layerProperties[i].layerName << std::endl;
-		std::cout << "\t\tSpecification Version:\t" << getVersionString(layerProperties[i].specVersion) << std::endl;
-		std::cout << "\t\tImplementation Version:\t" << layerProperties[i].implementationVersion << std::endl;
-		std::cout << "\t\tDescription:\t" << layerProperties[i].description << std::endl;
+		for (uint32_t i = 0; i < layerPropertiesCount; i++) {
+			std::cout << "\tLayer #" << std::to_string(i) << std::endl;
+			std::cout << "\t\tName:\t" << layerProperties[i].layerName << std::endl;
+			std::cout << "\t\tSpecification Version:\t" << getVersionString(layerProperties[i].specVersion) << std::endl;
+			std::cout << "\t\tImplementation Version:\t" << layerProperties[i].implementationVersion << std::endl;
+			std::cout << "\t\tDescription:\t" << layerProperties[i].description << std::endl;
+		}
 	}
-#endif
 }
 
 void VulkanEngine::createAllTextures() {
@@ -616,17 +617,17 @@ void VulkanEngine::getDeviceLayers() {
 
 	vkEnumerateDeviceLayerProperties(physicalDevices[0], &layerPropertiesCount, layerProperties.data());
 
-#ifdef PRINT_DEVICE_LAYERS
-	std::cout << "Device Layers:\n";
+	if (printLayerAndExtensions) {
+		std::cout << "Device Layers:\n";
 
-	for (uint32_t i = 0; i < layerPropertiesCount; i++) {
-		std::cout << "\tLayer #" << std::to_string(i) << std::endl;
-		std::cout << "\t\tName:\t" << layerProperties[i].layerName << std::endl;
-		std::cout << "\t\tSpecification Version:\t" << getVersionString(layerProperties[i].specVersion) << std::endl;
-		std::cout << "\t\tImplementation Version:\t" << layerProperties[i].implementationVersion << std::endl;
-		std::cout << "\t\tDescription:\t" << layerProperties[i].description << std::endl;
+		for (uint32_t i = 0; i < layerPropertiesCount; i++) {
+			std::cout << "\tLayer #" << std::to_string(i) << std::endl;
+			std::cout << "\t\tName:\t" << layerProperties[i].layerName << std::endl;
+			std::cout << "\t\tSpecification Version:\t" << getVersionString(layerProperties[i].specVersion) << std::endl;
+			std::cout << "\t\tImplementation Version:\t" << layerProperties[i].implementationVersion << std::endl;
+			std::cout << "\t\tDescription:\t" << layerProperties[i].description << std::endl;
+		}
 	}
-#endif
 }
 
 void VulkanEngine::enumeratePhysicalDevices() {

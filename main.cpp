@@ -8,6 +8,9 @@
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 #define PRINT_ERROR(X) std::cerr << "Error: " << X << std::endl
+#define MAKE_ATOMIC_ACCESSORS(_TYPE_, _NAME_)\
+inline _TYPE_ get_##_NAME_##(){lock.lock();_TYPE_ val=this->##_NAME_##;lock.unlock();return val;}\
+inline void set_##_NAME_##(_TYPE_ val){lock.lock();this->##_NAME_## = val;lock.unlock();}
 //#define _MAKE_WINDOW_NAME_GET_RESOLUTION_WIDTH() WINDOW_RESOLUTION_WIDTH
 //#define _MAKE_WINDOW_NAME_GET_RESOLUTION_HEIGHT() WINDOW_RESOLUTION_HEIGHT
 //#define _MAKE_WINDOW_NAME_GET_NAME() APP_WINDOW_NAME
@@ -55,29 +58,8 @@ private:
 };
 
 struct SharedData {
-	inline HWND get_wndHWND() {
-		lock.lock();
-		HWND val = this->wndHWND;
-		lock.unlock();
-		return val;
-	}
-	inline bool get_terminating() {
-		lock.lock();
-		bool val = this->terminating;
-		lock.unlock();
-		return val;
-	}
-
-	inline void set_wndHWND(HWND val) {
-		lock.lock();
-		this->wndHWND = val;
-		lock.unlock();
-	}
-	inline void set_terminating(bool val) {
-		lock.lock();
-		this->terminating = val;
-		lock.unlock();
-	}
+	MAKE_ATOMIC_ACCESSORS(bool, terminating);
+	MAKE_ATOMIC_ACCESSORS(HWND, wndHWND);
 
 	inline void switchAutoRotationState() {
 		lock.lock();
@@ -118,10 +100,10 @@ private:
 
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	short wheelDelta = 0;//TODO DO THIS
+	short wheelDelta = 0;
 	SharedData* sharedData = nullptr;
 
-	if (msg == WM_CREATE/* || msg == WM_NCCREATE*/)
+	if (msg == WM_CREATE)
 	{
 		CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
 		sharedData = reinterpret_cast<SharedData*>(pCreate->lpCreateParams);

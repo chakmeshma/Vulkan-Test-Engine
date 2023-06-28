@@ -351,6 +351,8 @@ private:
 
 	static int getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties);
 
+	static void initDevIL();
+
 	void createPipelineAndDescriptorSetsLayout();
 
 	void render(uint32_t drawableImageIndex);

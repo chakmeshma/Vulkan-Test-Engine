@@ -113,7 +113,13 @@ std::string VulkanEngine::getVersionString(uint32_t versionBitmask) {
 	return versionString;
 }
 
+void VulkanEngine::initDevIL() {
+	ilInit();
+	std::cout << "DevIL library inited." << std::endl;
+}
+
 void VulkanEngine::init() {
+	initDevIL();
 	getInstanceExtensions();
 	getInstanceLayers();
 	createInstance();

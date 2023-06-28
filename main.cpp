@@ -311,9 +311,6 @@ unsigned __stdcall engineThreadProc(void* data) {
 		return 0;
 
 	try {
-		ilInit(); //TODO move this to the VulkanEngine
-		std::cout << "DevIL library inited." << std::endl;
-
 		engine = new VulkanEngine(sharedData->hInstance, sharedData->get_wndHWND(), sharedData->initConfig);
 		engine->init();
 		engine->calculateViewProjection();

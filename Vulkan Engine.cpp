@@ -2159,8 +2159,11 @@ void VulkanEngine::createSwapchain() {
 		throw VulkanException("Couldn't get swapchain images.");
 
 	swapchainImages = new VkImage[swapchainImagesCount];
-
 	NULL_HANDLE_INIT_ARRAY(swapchainImages, swapchainImagesCount)
+	swapchainImageViews = new VkImageView[swapchainImagesCount];
+	NULL_HANDLE_INIT_ARRAY(swapchainImageViews, swapchainImagesCount)
+	framebuffers = new VkFramebuffer[swapchainImagesCount];
+	NULL_HANDLE_INIT_ARRAY(framebuffers, swapchainImagesCount)
 
 		if ((swapchainImageResult = vkGetSwapchainImagesKHR(logicalDevices[0], swapchain, &swapchainImagesCount,
 			swapchainImages)) == VK_SUCCESS) {
@@ -2322,10 +2325,6 @@ void VulkanEngine::createRenderpass() {
 }
 
 void VulkanEngine::createFramebuffers() {
-	framebuffers = new VkFramebuffer[swapchainImagesCount];
-
-	NULL_HANDLE_INIT_ARRAY(framebuffers, swapchainImagesCount)
-
 		for (uint32_t i = 0; i < swapchainImagesCount; i++) {
 			VkImageView attachments[2] = { swapchainImageViews[i], depthImageView };
 
@@ -2351,39 +2350,34 @@ void VulkanEngine::createFramebuffers() {
 }
 
 void VulkanEngine::createSwapchainImageViews() {
+	for (uint32_t i = 0; i < swapchainImagesCount; i++) {
+		VkImage swapchainImage = swapchainImages[i];
 
-	swapchainImageViews = new VkImageView[swapchainImagesCount];
+		VkImageViewCreateInfo swapchainImageViewCreateInfo = {};
+		swapchainImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		swapchainImageViewCreateInfo.pNext = nullptr;
+		swapchainImageViewCreateInfo.flags = 0;
+		swapchainImageViewCreateInfo.image = swapchainImages[i];
+		swapchainImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		swapchainImageViewCreateInfo.format = surfaceImageFormat;
+		swapchainImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+		swapchainImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+		swapchainImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+		swapchainImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+		swapchainImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		swapchainImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+		swapchainImageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+		swapchainImageViewCreateInfo.subresourceRange.layerCount = 1;
+		swapchainImageViewCreateInfo.subresourceRange.levelCount = 1;
 
-	NULL_HANDLE_INIT_ARRAY(swapchainImageViews, swapchainImagesCount)
+		VkResult result = vkCreateImageView(logicalDevices[0], &swapchainImageViewCreateInfo, nullptr,
+			swapchainImageViews + i);
 
-		for (uint32_t i = 0; i < swapchainImagesCount; i++) {
-			VkImage swapchainImage = swapchainImages[i];
-
-			VkImageViewCreateInfo swapchainImageViewCreateInfo = {};
-			swapchainImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-			swapchainImageViewCreateInfo.pNext = nullptr;
-			swapchainImageViewCreateInfo.flags = 0;
-			swapchainImageViewCreateInfo.image = swapchainImages[i];
-			swapchainImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			swapchainImageViewCreateInfo.format = surfaceImageFormat;
-			swapchainImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
-			swapchainImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
-			swapchainImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
-			swapchainImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
-			swapchainImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			swapchainImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-			swapchainImageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-			swapchainImageViewCreateInfo.subresourceRange.layerCount = 1;
-			swapchainImageViewCreateInfo.subresourceRange.levelCount = 1;
-
-			VkResult result = vkCreateImageView(logicalDevices[0], &swapchainImageViewCreateInfo, nullptr,
-				swapchainImageViews + i);
-
-			if (result == VK_SUCCESS)
-				std::cout << "ImageView for swap chain image (" << i << ") created successfully." << std::endl;
-			else
-				throw VulkanException("ImageView creation failed.");
-		}
+		if (result == VK_SUCCESS)
+			std::cout << "ImageView for swap chain image (" << i << ") created successfully." << std::endl;
+		else
+			throw VulkanException("ImageView creation failed.");
+	}
 
 }
 

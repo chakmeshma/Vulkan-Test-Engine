@@ -103,6 +103,8 @@ public:
 
 	void cameraRotate();
 
+	void cameraZoom(float zoomValue);
+
 	void calculateViewProjection();
 
 	float getElapsedTime();
@@ -405,6 +407,7 @@ private:
 	//VkPipeline graphicsDebugPipeline;
 
 	float autoRotationSpeed;
+	float zoomSpeed;
 	float fovAngle;
 	float zNear;
 	float zFar;

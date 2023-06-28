@@ -32,6 +32,7 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitCon
 	this->resourcesPath.append("\\");
 	this->clearColor = initConfig->clearColor;
 	this->autoRotationSpeed = initConfig->speedAutoRotation;
+	this->zoomSpeed = initConfig->speedZoom;
 	this->recompileShaders = initConfig->recompileShaders;
 
 	this->hInstance = hInstance;
@@ -204,6 +205,15 @@ void VulkanEngine::calculateViewProjection() {
 
 void VulkanEngine::cameraRotate() {
 	cameraRotationValue += autoRotationSpeed * getElapsedTime();
+	calculateViewProjection();
+}
+
+void VulkanEngine::cameraZoom(float zoomValue) {
+	if (zoomValue == 0.0f)
+		return;
+
+	float appliedZoomValue = 1.0f - float(zoomValue) * zoomSpeed;
+	cameraDistance *= appliedZoomValue;
 	calculateViewProjection();
 }
 

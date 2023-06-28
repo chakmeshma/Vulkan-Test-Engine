@@ -28,9 +28,6 @@
 //static float panSpeed = 1.0f;
 //static float wheelZoomSpeed = .0001f;
 //static float autoRotationSpeed = 0.000001f;
-static bool autoRotationEnabled = true;
-static bool resetTimer = true;
-
 
 //BOOL WINAPI closeHandler(DWORD dwCtrlType) {
 //	if (!engine->terminating) {
@@ -45,6 +42,17 @@ static bool resetTimer = true;
 //
 //	return TRUE;
 //}
+
+struct SharedData;
+
+struct InteractionState {
+	//TODO split InteractionState into rotationstate and zoomstate to reduce/remove unnecessary stalling across threads since these are independate
+private:
+	friend struct SharedData;
+	bool autoRotationEnabled = true;
+	bool resetTimer = true;
+	float accumulatedZoom = 0.0f;
+};
 
 struct SharedData {
 	inline HWND get_wndHWND() {
@@ -71,19 +79,46 @@ struct SharedData {
 		lock.unlock();
 	}
 
+	inline void switchAutoRotationState() {
+		lock.lock();
+		this->interactionState.autoRotationEnabled = !this->interactionState.autoRotationEnabled;
+		this->interactionState.resetTimer = true;
+		lock.unlock();
+	}
+	inline void flushRotationState(bool* const autoRotationEnabled, bool* const resetTimer) {
+		//TODO not sure if using ref instead of pointer is a good idea since the valuechaning might not happen between lock and unlock
+		lock.lock();
+		*autoRotationEnabled = interactionState.autoRotationEnabled;
+		*resetTimer = interactionState.resetTimer;
+		interactionState.resetTimer = false;
+		lock.unlock();
+	}
+	inline void accZoom(float val) {
+		lock.lock();
+		interactionState.accumulatedZoom += val;
+		lock.unlock();
+	}
+	inline float flushZoom() {
+		lock.lock();
+		float val = interactionState.accumulatedZoom;
+		interactionState.accumulatedZoom = 0;
+		lock.unlock();
+		return val;
+	}
+
 	InitConfiguration* initConfig = nullptr;
 	HINSTANCE hInstance = NULL;
 private:
 	HWND wndHWND = NULL;
 	bool terminating = false;
+	InteractionState interactionState;
 
 	std::mutex lock;
 };
 
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	//short wheelDelta = 0;//TODO DO THIS
-	//float appliedWheelData = 1.0f;
+	short wheelDelta = 0;//TODO DO THIS
 	SharedData* sharedData = nullptr;
 
 	if (msg == WM_CREATE/* || msg == WM_NCCREATE*/)
@@ -106,73 +141,68 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
-		/*case WM_MOUSEWHEEL:
-			wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		//case WM_MBUTTONDOWN:
+		//	lastTranslationPosX = -1;
+		//	lastTranslationPosY = -1;
+		//	break;
+		//case WM_LBUTTONDOWN:
+		//	lastRotationPosX = -1;
+		//	lastRotationPosY = -1;
+		//	break;
+		//case WM_MOUSELEAVE:
+		//	lastRotationPosX = -1;
+		//	lastRotationPosY = -1;
+		//	lastTranslationPosX = -1;
+		//	lastTranslationPosY = -1;
+		//	break;
+		//case WM_MOUSEMOVE:
+		//	if ((wParam & MK_LBUTTON) != 0) {
+		//		int xPos = GET_X_LPARAM(lParam);
+		//		int yPos = GET_Y_LPARAM(lParam);
+		//		if (lastRotationPosX == -1 || lastRotationPosY == -1) {
+		//			lastRotationPosX = xPos;
+		//			lastRotationPosY = yPos;
+		//		}
+		//		int deltaX = xPos - lastRotationPosX;
+		//		int deltaY = yPos - lastRotationPosY;
 
-			appliedWheelData = 1.0f - float(wheelDelta) * initConfig->speedZoom;
+		//		lastRotationPosX = xPos;
+		//		lastRotationPosY = yPos;
 
-			engine->cameraDistance *= appliedWheelData;
+		//		engine->focusYaw -= float(deltaX) / 400.0f * rotationSpeed;
+		//		engine->focusPitch += float(deltaY) / 400.0f * rotationSpeed;
 
-			VulkanEngine::calculateViewProjection(engine);
-			break;*/
-			//case WM_MBUTTONDOWN:
-			//	lastTranslationPosX = -1;
-			//	lastTranslationPosY = -1;
-			//	break;
-			//case WM_LBUTTONDOWN:
-			//	lastRotationPosX = -1;
-			//	lastRotationPosY = -1;
-			//	break;
-			//case WM_MOUSELEAVE:
-			//	lastRotationPosX = -1;
-			//	lastRotationPosY = -1;
-			//	lastTranslationPosX = -1;
-			//	lastTranslationPosY = -1;
-			//	break;
-			//case WM_MOUSEMOVE:
-			//	if ((wParam & MK_LBUTTON) != 0) {
-			//		int xPos = GET_X_LPARAM(lParam);
-			//		int yPos = GET_Y_LPARAM(lParam);
-			//		if (lastRotationPosX == -1 || lastRotationPosY == -1) {
-			//			lastRotationPosX = xPos;
-			//			lastRotationPosY = yPos;
-			//		}
-			//		int deltaX = xPos - lastRotationPosX;
-			//		int deltaY = yPos - lastRotationPosY;
+		//		engine->focusPitch = std::max(-89.9f, std::min(engine->focusPitch, 89.9f));
 
-			//		lastRotationPosX = xPos;
-			//		lastRotationPosY = yPos;
+		//		VulkanEngine::calculateViewProjection(engine);
+		//	}
+		//	else if ((wParam & MK_MBUTTON) != 0) {
+		//		int xPos = GET_X_LPARAM(lParam);
+		//		int yPos = GET_Y_LPARAM(lParam);
+		//		if (lastTranslationPosX == -1 || lastTranslationPosY == -1) {
+		//			lastTranslationPosX = xPos;
+		//			lastTranslationPosY = yPos;
+		//		}
+		//		int deltaX = xPos - lastTranslationPosX;
+		//		int deltaY = yPos - lastTranslationPosY;
 
-			//		engine->focusYaw -= float(deltaX) / 400.0f * rotationSpeed;
-			//		engine->focusPitch += float(deltaY) / 400.0f * rotationSpeed;
-
-			//		engine->focusPitch = std::max(-89.9f, std::min(engine->focusPitch, 89.9f));
-
-			//		VulkanEngine::calculateViewProjection(engine);
-			//	}
-			//	else if ((wParam & MK_MBUTTON) != 0) {
-			//		int xPos = GET_X_LPARAM(lParam);
-			//		int yPos = GET_Y_LPARAM(lParam);
-			//		if (lastTranslationPosX == -1 || lastTranslationPosY == -1) {
-			//			lastTranslationPosX = xPos;
-			//			lastTranslationPosY = yPos;
-			//		}
-			//		int deltaX = xPos - lastTranslationPosX;
-			//		int deltaY = yPos - lastTranslationPosY;
-
-			//		lastTranslationPosX = xPos;
-			//		lastTranslationPosY = yPos;
+		//		lastTranslationPosX = xPos;
+		//		lastTranslationPosY = yPos;
 
 
-			//		engine->focusPointX -= float(deltaX) / 1000.0f * panSpeed;
-			//		engine->focusPointY -= float(deltaY) / 1000.0f * panSpeed;
+		//		engine->focusPointX -= float(deltaX) / 1000.0f * panSpeed;
+		//		engine->focusPointY -= float(deltaY) / 1000.0f * panSpeed;
 
-			//		VulkanEngine::calculateViewProjection(engine);
-			//	}
-			//	break;
+		//		VulkanEngine::calculateViewProjection(engine);
+		//	}
+		//	break;
+	case WM_MOUSEWHEEL:
+		wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		sharedData->accZoom(wheelDelta);
+		break;
 	case WM_KEYDOWN:
-		if (wParam == 32) autoRotationEnabled = !autoRotationEnabled;
-		resetTimer = true;
+		if (wParam == 32)
+			sharedData->switchAutoRotationState();
 		break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -323,11 +353,17 @@ unsigned __stdcall engineThreadProc(void* data) {
 
 	while (engine != nullptr && !sharedData->get_terminating()) {
 		try {
-			if (resetTimer) {
-				engine->resetTimer();
-				resetTimer = false;
-			}
+			bool resetTimer;
+			bool autoRotationEnabled;
+			float zoom;
+
+			sharedData->flushRotationState(&autoRotationEnabled, &resetTimer);
+			zoom = sharedData->flushZoom();
+
+			if (resetTimer) engine->resetTimer();
 			if (autoRotationEnabled) engine->cameraRotate();
+			engine->cameraZoom(zoom);
+
 			engine->draw();
 		}
 		catch (VulkanException e) {

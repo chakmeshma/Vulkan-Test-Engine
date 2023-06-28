@@ -1,10 +1,9 @@
 //Mit dem Angriff Steiners wird alles in Ordnung sein!
-#include <Windows.h>
-#include <thread>
 #include <iostream>
+#include <mutex>
+#include <Windows.h>
 #include "Vulkan Engine.h"
 #include "initconfig.h"
-#include <mutex>
 
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))

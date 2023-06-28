@@ -338,6 +338,8 @@ unsigned __stdcall engineThreadProc(void* data) {
 	if (engine != nullptr)
 		delete engine;
 
+	PostMessage(sharedData->get_wndHWND(), WM_NULL, 0, 0);
+
 	return 0;
 }
 

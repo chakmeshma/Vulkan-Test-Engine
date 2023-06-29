@@ -98,6 +98,19 @@ private:
 	std::mutex lock;
 };
 
+inline void drawLoadingText(HWND hwnd) {
+	static RECT textRect{ -1, -1, -1, -1 }; // static because window size won't change 
+	HDC wdc = GetWindowDC(hwnd);
+	if (textRect.left == -1) {
+		RECT clientRect;
+		GetClientRect(hwnd, &clientRect);
+		int xCenter = (clientRect.right - clientRect.left) / 2;
+		int yCenter = (clientRect.bottom - clientRect.top) / 2;
+		textRect = { xCenter, yCenter, xCenter + 1, yCenter + 1 };
+	}
+	DrawText(wdc, "Loading...", -1, &textRect, DT_SINGLELINE | DT_NOCLIP | DT_CENTER);
+	DeleteDC(wdc);
+}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	short wheelDelta = 0;
@@ -288,6 +301,8 @@ unsigned __stdcall windowThreadProc(void* data) {
 
 			ShowCursor(false);
 		}
+
+		drawLoadingText(hwnd);
 
 		sharedData->set_wndHWND(hwnd); //todo: maybe I should supply hwnd to shareddata later (eg. after or inside first WM_CREATE)?
 

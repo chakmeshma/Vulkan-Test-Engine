@@ -40,8 +40,8 @@
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>C:\Users\Chakmeshma\Desktop\shaderc-build\libshaderc\Debug;C:\DevIL Windows SDK\lib\x64\Release;C:\VulkanSDK\1.3.250.0\Lib;C:\Program Files\Assimp\lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\VulkanSDK\1.3.250.0\Include;C:\Users\Chakmeshma\Desktop\shaderc\libshaderc\include;C:\DevIL Windows SDK\include;C:\Program Files\Assimp\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Chakmeshma\Desktop\shaderc-build\libshaderc\Debug;C:\DevIL Windows SDK\lib\x64\Release;C:\VulkanSDK\1.3.250.1\Lib;C:\Program Files\Assimp\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.3.250.1\Include;C:\Users\Chakmeshma\Desktop\shaderc\libshaderc\include;C:\DevIL Windows SDK\include;C:\Program Files\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>C:\Users\chakm\Desktop\shaderc-build\libshaderc\Release;C:\Users\chakm\Desktop\DevIL-build\lib\x64\Release;C:\VulkanSDK\1.0.65.0\Lib;C:\Users\chakm\Desktop\assimp-build\code\Release;$(LibraryPath)</LibraryPath>

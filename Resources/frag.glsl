@@ -66,6 +66,6 @@ void main()
 		
 	//outFragColor = vec4(diffuse * vec3(texelColor), texelColor.a); //                 for spec: diffuse * vec3(texelColor) + (specular * specularColor)
 	//outFragColor = vec4(normapFragNor, texelColor.a);
-	outFragColor = vec4(diffuse * vec3(texelColor) + (specular * specularColor), texelColor.a);
+	outFragColor = vec4(1.0, 1.0, 1.0, 1.0);
 	
 }

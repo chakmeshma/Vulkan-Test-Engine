@@ -992,6 +992,21 @@ void VulkanEngine::terminate() {
 		std::cout << "Depth-Stencil Image Memory freed." << std::endl;
 	}
 
+	if (mColorImageView != VK_NULL_HANDLE) {
+		vkDestroyImageView(logicalDevices[0], mColorImageView, nullptr);
+		std::cout << "Color ImageView destroyed." << std::endl;
+	}
+
+	if (mColorImage != VK_NULL_HANDLE) {
+		vkDestroyImage(logicalDevices[0], mColorImage, nullptr);
+		std::cout << "Color Image destroyed." << std::endl;
+	}
+
+	if (mColorImageMemory != VK_NULL_HANDLE) {
+		vkFreeMemory(logicalDevices[0], mColorImageMemory, nullptr);
+		std::cout << "Color Image Memory freed." << std::endl;
+	}
+
 	uint32_t numSwapchainImageViewsDestroyed = 0;
 	for (uint32_t i = 0; i < swapchainImagesCount; i++)
 	{

@@ -259,7 +259,7 @@ void VulkanEngine::createInstance() {
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pNext = nullptr;
 
-	std::vector<const char*> layerNames = { "VK_LAYER_LUNARG_monitor", "VK_LAYER_LUNARG_standard_validation" };
+	std::vector<const char*> layerNames = { "VK_LAYER_KHRONOS_validation" };
 	std::vector<const char*> extensionNames = { "VK_KHR_surface", "VK_KHR_win32_surface" };
 
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -268,7 +268,7 @@ void VulkanEngine::createInstance() {
 #ifndef _ENTBUG
 	instanceCreateInfo.enabledLayerCount = 2;
 #else
-	instanceCreateInfo.enabledLayerCount = 0;
+	instanceCreateInfo.enabledLayerCount = 1;
 #endif
 	instanceCreateInfo.ppEnabledExtensionNames = extensionNames.data();
 	instanceCreateInfo.ppEnabledLayerNames = layerNames.data();

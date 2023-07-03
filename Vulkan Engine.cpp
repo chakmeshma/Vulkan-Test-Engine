@@ -141,6 +141,7 @@ void VulkanEngine::init() {
 	createSwapchain();  // create swapchain
 	getSupportedDepthFormat();
 	createDepthImageAndImageview(); // create depth image and depth imageview (depth-stencil attachment)
+	createMColorImageAndImageView();
 	createSwapchainImageViews(); // create swapchain imageviews (framebuffer color attachment)
 	createRenderpass(); // create renderpass
 	createFramebuffers(); // create framebuffer
@@ -696,16 +697,16 @@ void VulkanEngine::commitBuffers() {
 	vkFreeCommandBuffers(logicalDevices[0], transferCommandPool, 1, &commandBuffer);
 }
 
-int VulkanEngine::getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties) {
+VkSampleCountFlagBits VulkanEngine::getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties) {
 	VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
-	if (counts & VK_SAMPLE_COUNT_64_BIT) { return 64; }
-	if (counts & VK_SAMPLE_COUNT_32_BIT) { return 32; }
-	if (counts & VK_SAMPLE_COUNT_16_BIT) { return 16; }
-	if (counts & VK_SAMPLE_COUNT_8_BIT) { return 8; }
-	if (counts & VK_SAMPLE_COUNT_4_BIT) { return 4; }
-	if (counts & VK_SAMPLE_COUNT_2_BIT) { return 2; }
+	if (counts & VK_SAMPLE_COUNT_64_BIT) { return VK_SAMPLE_COUNT_64_BIT; }
+	if (counts & VK_SAMPLE_COUNT_32_BIT) { return VK_SAMPLE_COUNT_32_BIT; }
+	if (counts & VK_SAMPLE_COUNT_16_BIT) { return VK_SAMPLE_COUNT_16_BIT; }
+	if (counts & VK_SAMPLE_COUNT_8_BIT) { return VK_SAMPLE_COUNT_8_BIT; }
+	if (counts & VK_SAMPLE_COUNT_4_BIT) { return VK_SAMPLE_COUNT_4_BIT; }
+	if (counts & VK_SAMPLE_COUNT_2_BIT) { return VK_SAMPLE_COUNT_2_BIT; }
 
-	return 1;
+	return VK_SAMPLE_COUNT_1_BIT;
 }
 
 void VulkanEngine::getPhysicalDevicePropertiesAndFeatures() {
@@ -742,7 +743,7 @@ void VulkanEngine::getPhysicalDevicePropertiesAndFeatures() {
 	std::cout << "Maximum Subpass Color Attachments: " << deviceProperties.limits.maxColorAttachments << std::endl;
 
 
-	int maxUsableSampleCount = getMaxUsableSampleCount(deviceProperties);
+	maxUsableSampleCount = getMaxUsableSampleCount(deviceProperties);
 
 	std::cout << "Maximum Framebuffer Sample Count: " << maxUsableSampleCount << std::endl;
 
@@ -1414,25 +1415,25 @@ void VulkanEngine::createAllBuffers() {
 
 void VulkanEngine::createDepthImageAndImageview() {
 
-	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageCreateInfo.pNext = nullptr;
-	imageCreateInfo.flags = 0;
-	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageCreateInfo.format = depthFormat;
-	imageCreateInfo.extent.width = swapchainCreateInfo.imageExtent.width;
-	imageCreateInfo.extent.height = swapchainCreateInfo.imageExtent.height;
-	imageCreateInfo.extent.depth = 1;
-	imageCreateInfo.arrayLayers = 1;
-	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-	imageCreateInfo.mipLevels = 1;
-	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageCreateInfo.queueFamilyIndexCount = 0;
-	imageCreateInfo.pQueueFamilyIndices = nullptr;
+	depthImageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	depthImageCreateInfo.pNext = nullptr;
+	depthImageCreateInfo.flags = 0;
+	depthImageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+	depthImageCreateInfo.format = depthFormat;
+	depthImageCreateInfo.extent.width = swapchainCreateInfo.imageExtent.width;
+	depthImageCreateInfo.extent.height = swapchainCreateInfo.imageExtent.height;
+	depthImageCreateInfo.extent.depth = 1;
+	depthImageCreateInfo.arrayLayers = 1;
+	depthImageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	depthImageCreateInfo.samples = maxUsableSampleCount;
+	depthImageCreateInfo.usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	depthImageCreateInfo.mipLevels = 1;
+	depthImageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	depthImageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+	depthImageCreateInfo.queueFamilyIndexCount = 0;
+	depthImageCreateInfo.pQueueFamilyIndices = nullptr;
 
-	VKASSERT_SUCCESS(vkCreateImage(logicalDevices[0], &imageCreateInfo, nullptr, &depthImage));
+	VKASSERT_SUCCESS(vkCreateImage(logicalDevices[0], &depthImageCreateInfo, nullptr, &depthImage));
 
 	VkMemoryRequirements depthImageMemoryRequirements;
 
@@ -1463,8 +1464,71 @@ void VulkanEngine::createDepthImageAndImageview() {
 	depthImageViewCreateInfo.subresourceRange.levelCount = 1;
 	depthImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
 	depthImageViewCreateInfo.subresourceRange.layerCount = 1;
+	depthImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+	depthImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+	depthImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+	depthImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
 
 	VKASSERT_SUCCESS(vkCreateImageView(logicalDevices[0], &depthImageViewCreateInfo, nullptr, &depthImageView));
+}
+
+void VulkanEngine::createMColorImageAndImageView()
+{
+	mColorImageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	mColorImageCreateInfo.pNext = nullptr;
+	mColorImageCreateInfo.flags = 0;
+	mColorImageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+	mColorImageCreateInfo.format = surfaceImageFormat;
+	mColorImageCreateInfo.extent.width = swapchainCreateInfo.imageExtent.width;
+	mColorImageCreateInfo.extent.height = swapchainCreateInfo.imageExtent.height;
+	mColorImageCreateInfo.extent.depth = 1;
+	mColorImageCreateInfo.arrayLayers = 1;
+	mColorImageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	mColorImageCreateInfo.samples = maxUsableSampleCount;
+	mColorImageCreateInfo.usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	mColorImageCreateInfo.mipLevels = 1;
+	mColorImageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	mColorImageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+	mColorImageCreateInfo.queueFamilyIndexCount = 0;
+	mColorImageCreateInfo.pQueueFamilyIndices = nullptr;
+
+	VKASSERT_SUCCESS(vkCreateImage(logicalDevices[0], &mColorImageCreateInfo, nullptr, &mColorImage));
+
+	VkMemoryRequirements mColorImageMemoryRequirements;
+
+	vkGetImageMemoryRequirements(logicalDevices[0], mColorImage, &mColorImageMemoryRequirements);
+
+	VkMemoryAllocateInfo mImageMemoryAllocateInfo = {};
+
+	mImageMemoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	mImageMemoryAllocateInfo.pNext = nullptr;
+	mImageMemoryAllocateInfo.allocationSize = mColorImageMemoryRequirements.size;
+	mImageMemoryAllocateInfo.memoryTypeIndex = deviceLocalMemoryTypeIndex;
+
+	VKASSERT_SUCCESS(vkAllocateMemory(logicalDevices[0], &mImageMemoryAllocateInfo, nullptr, &mColorImageMemory));
+
+	VKASSERT_SUCCESS(vkBindImageMemory(logicalDevices[0], mColorImage, mColorImageMemory, 0));
+
+	VkImageViewCreateInfo mColorImageViewCreateInfo = {};
+
+	mColorImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	mColorImageViewCreateInfo.pNext = NULL;
+	mColorImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	mColorImageViewCreateInfo.format = surfaceImageFormat;
+	mColorImageViewCreateInfo.flags = 0;
+	mColorImageViewCreateInfo.image = mColorImage;
+	mColorImageViewCreateInfo.subresourceRange = {};
+	mColorImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	mColorImageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+	mColorImageViewCreateInfo.subresourceRange.levelCount = 1;
+	mColorImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+	mColorImageViewCreateInfo.subresourceRange.layerCount = 1;
+	mColorImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+	mColorImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+	mColorImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+	mColorImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+
+	VKASSERT_SUCCESS(vkCreateImageView(logicalDevices[0], &mColorImageViewCreateInfo, nullptr, &mColorImageView));
 }
 
 //void VulkanEngine::getPhysicalDeviceImageFormatProperties(VkFormat imageFormat) {
@@ -2147,7 +2211,7 @@ void VulkanEngine::createSwapchain() {
 	else
 		throw VulkanException("Surface doesn't support COLOR_ATTACHMENT usage bits.");
 
-	swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 	swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	swapchainCreateInfo.pQueueFamilyIndices = nullptr;
 	swapchainCreateInfo.queueFamilyIndexCount = 0;
@@ -2252,26 +2316,36 @@ void VulkanEngine::present(uint32_t swapchainPresentImageIndex) {
 }
 
 void VulkanEngine::createRenderpass() {
-	VkAttachmentDescription attachments[2];
+	VkAttachmentDescription attachments[3];
 	attachments[0].flags = 0;
 	attachments[0].format = surfaceImageFormat;
-	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
+	attachments[0].samples = maxUsableSampleCount;
 	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	attachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 	attachments[1].flags = 0;
 	attachments[1].format = depthFormat;
-	attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
+	attachments[1].samples = maxUsableSampleCount;
 	attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	attachments[2].flags = 0;
+	attachments[2].format = surfaceImageFormat;
+	attachments[2].samples = VK_SAMPLE_COUNT_1_BIT;
+	attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	attachments[2].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[2].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	attachments[2].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[2].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	attachments[2].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 	VkSubpassDescription subpass = {};
 
@@ -2284,6 +2358,10 @@ void VulkanEngine::createRenderpass() {
 	depthStencilAttachment.attachment = 1;
 	depthStencilAttachment.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
+	VkAttachmentReference resolveAttachment = {};
+	resolveAttachment.attachment = 2;
+	resolveAttachment.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
 
 	subpass.flags = 0;
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -2292,28 +2370,28 @@ void VulkanEngine::createRenderpass() {
 	subpass.colorAttachmentCount = 1;
 	subpass.pDepthStencilAttachment = &depthStencilAttachment;
 	subpass.pColorAttachments = &colorAttachment;
-	subpass.pResolveAttachments = nullptr;
+	subpass.pResolveAttachments = &resolveAttachment;
 	subpass.preserveAttachmentCount = 0;
 	subpass.pPreserveAttachments = nullptr;
 
 	renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 	renderPassCreateInfo.pNext = nullptr;
 	renderPassCreateInfo.flags = 0;
-	renderPassCreateInfo.attachmentCount = 2;
+	renderPassCreateInfo.attachmentCount = 3;
 	renderPassCreateInfo.pAttachments = attachments;
 	renderPassCreateInfo.subpassCount = 1;
 	renderPassCreateInfo.pSubpasses = &subpass;
 
 
-	VkSubpassDependency subpassDependencies[1];
+	//VkSubpassDependency subpassDependencies[1];
 
-	subpassDependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;                                // Producer of the dependency
-	subpassDependencies[0].dstSubpass = 0;                                                    // Consumer is our single subpass that will wait for the execution depdendency
-	subpassDependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-	subpassDependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	subpassDependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-	subpassDependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	subpassDependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+	//subpassDependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;                                // Producer of the dependency
+	//subpassDependencies[0].dstSubpass = 0;                                                    // Consumer is our single subpass that will wait for the execution depdendency
+	//subpassDependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	//subpassDependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	//subpassDependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+	//subpassDependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	//subpassDependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
 	//// Second dependency at the end the renderpass
 	//// Does the transition from the initial to the final layout
@@ -2325,8 +2403,8 @@ void VulkanEngine::createRenderpass() {
 	//subpassDependencies[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 	//subpassDependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
-	renderPassCreateInfo.dependencyCount = 1;
-	renderPassCreateInfo.pDependencies = subpassDependencies;
+	renderPassCreateInfo.dependencyCount = 0;
+	renderPassCreateInfo.pDependencies = nullptr;
 
 	VkResult result = vkCreateRenderPass(logicalDevices[0], &renderPassCreateInfo, nullptr, &renderPass);
 
@@ -2338,7 +2416,7 @@ void VulkanEngine::createRenderpass() {
 
 void VulkanEngine::createFramebuffers() {
 	for (uint32_t i = 0; i < swapchainImagesCount; i++) {
-		VkImageView attachments[2] = { swapchainImageViews[i], depthImageView };
+		VkImageView attachments[3] = { mColorImageView, depthImageView, swapchainImageViews[i] };
 
 		VkFramebufferCreateInfo framebufferCreateInfo = {};
 
@@ -2346,7 +2424,7 @@ void VulkanEngine::createFramebuffers() {
 		framebufferCreateInfo.pNext = nullptr;
 		framebufferCreateInfo.flags = 0;
 		framebufferCreateInfo.renderPass = renderPass;
-		framebufferCreateInfo.attachmentCount = 2;
+		framebufferCreateInfo.attachmentCount = 3;
 		framebufferCreateInfo.pAttachments = attachments;
 		framebufferCreateInfo.width = surfaceCapabilities.currentExtent.width;
 		framebufferCreateInfo.height = surfaceCapabilities.currentExtent.height;
@@ -2495,7 +2573,7 @@ void VulkanEngine::createGraphicsPipeline() {
 	multisampleStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	multisampleStateCreateInfo.pNext = nullptr;
 	multisampleStateCreateInfo.flags = 0;
-	multisampleStateCreateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+	multisampleStateCreateInfo.rasterizationSamples = maxUsableSampleCount;
 	multisampleStateCreateInfo.sampleShadingEnable = VK_FALSE;
 	multisampleStateCreateInfo.pSampleMask = nullptr;
 
@@ -2819,6 +2897,7 @@ void VulkanEngine::render(uint32_t drawableImageIndex) {
 
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {};
 	commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	commandBufferBeginInfo.pNext = nullptr;
 	commandBufferBeginInfo.pInheritanceInfo = nullptr;
 	commandBufferBeginInfo.flags = 0;
 

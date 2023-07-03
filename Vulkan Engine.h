@@ -160,10 +160,13 @@ private:
 	std::vector<VkExtensionProperties> instanceExtensions;
 	VkImageFormatProperties imageFormatProperties = {};
 	VkFormatProperties formatProperties = {};
-	VkImageCreateInfo imageCreateInfo = {};
+	VkImageCreateInfo depthImageCreateInfo = {};
+	VkImageCreateInfo mColorImageCreateInfo = {};
 	VkImage depthImage = VK_NULL_HANDLE;
+	VkImage mColorImage = VK_NULL_HANDLE;
 	VkImageViewCreateInfo imageViewCreateInfo = {};
 	VkImageView depthImageView = VK_NULL_HANDLE;
+	VkImageView mColorImageView = VK_NULL_HANDLE;
 	uint32_t memoryTypeCount = 0;
 	uint32_t hostVisibleMemoryTypeIndex = -1;
 	uint32_t deviceLocalMemoryTypeIndex = -1;
@@ -251,6 +254,7 @@ private:
 	VkImage specTextureImages[MAX_SPECULAR_TEXTURE_ARRAY_SIZE];
 	VkImageView specTextureViews[MAX_SPECULAR_TEXTURE_ARRAY_SIZE];
 	VkDeviceMemory depthImageMemory = VK_NULL_HANDLE;
+	VkDeviceMemory mColorImageMemory = VK_NULL_HANDLE;
 	VkDeviceMemory uniTexturesMemory = VK_NULL_HANDLE;
 	VkDeviceMemory uniBuffersMemory = VK_NULL_HANDLE;
 	VkDeviceMemory uniTexturesMemoryDevice = VK_NULL_HANDLE;
@@ -277,6 +281,7 @@ private:
 	VkDescriptorSet meshDescriptorSets[MAX_MESHES];
 	VkSampler textureSampler = VK_NULL_HANDLE;
 	VkFence queueDoneFence = VK_NULL_HANDLE;
+	VkSampleCountFlagBits maxUsableSampleCount = VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
 	LARGE_INTEGER frequency;        // ticks per second
 	LARGE_INTEGER t1, t2;           // ticks
 	double elapsedTime;
@@ -303,6 +308,8 @@ private:
 	void createAllBuffers();
 
 	void createDepthImageAndImageview();
+
+	void createMColorImageAndImageView();
 
 	void createSparseImage();
 
@@ -348,7 +355,7 @@ private:
 
 	static std::string makeDevilErrorText(std::string filePath);
 
-	static int getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties);
+	static VkSampleCountFlagBits getMaxUsableSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties);
 
 	static void initDevIL();
 

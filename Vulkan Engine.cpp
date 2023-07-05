@@ -122,7 +122,6 @@ void VulkanEngine::initDevIL() {
 }
 
 void VulkanEngine::init() {
-	initDevIL();
 	getInstanceExtensions();
 	getInstanceLayers();
 	createInstance();
@@ -133,6 +132,7 @@ void VulkanEngine::init() {
 	getDeviceExtensions();
 	getDeviceLayers();
 	loadMesh(meshFileName.c_str());
+	initDevIL();
 	createAllTextures();
 	createAllBuffers();
 	getQueues();
@@ -268,7 +268,7 @@ void VulkanEngine::createInstance() {
 #ifndef _ENTBUG
 	instanceCreateInfo.enabledLayerCount = 2;
 #else
-	instanceCreateInfo.enabledLayerCount = 1;
+	instanceCreateInfo.enabledLayerCount = 0;
 #endif
 	instanceCreateInfo.ppEnabledExtensionNames = extensionNames.data();
 	instanceCreateInfo.ppEnabledLayerNames = layerNames.data();

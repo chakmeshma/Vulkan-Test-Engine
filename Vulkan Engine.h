@@ -73,39 +73,24 @@ struct ViewProjectionMatrices {
 
 class VulkanEngine {
 public:
-
 	VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitConfiguration* initConfig);
-
 	~VulkanEngine() noexcept(false);
-
-	void initSizedVkObjectsNull();
-
 	void init();
-
+	void render();
+	void calculateViewProjection();
+	void cameraRotate();
+	void cameraZoom(float zoomValue);
+	void resetTimer();
+private:
+	void initSizedVkObjectsNull();
 	void getInstanceExtensions();
-
 	void getDeviceExtensions();
-
 	static std::string getVersionString(uint32_t versionBitmask);
-
-	void draw();
-
 	float cameraRotationValue = 0.0f;
-
 	float cameraDistance;
-
 	ViewProjectionMatrices<float> viewProjection = {};
 	ModelMatrix<float> modelMatrix = {};
-
-	void cameraRotate();
-
-	void cameraZoom(float zoomValue);
-
-	void calculateViewProjection();
-
 	float getElapsedTime();
-	void resetTimer();
-
 	float focusPitch = 0.0f;
 	float focusYaw = 0.0f;
 	//    float initialModelScale = 1.0f;
@@ -114,7 +99,6 @@ public:
 	float focusPointX = 0.0f;
 	float focusPointY = 0.0f;
 	float focusPointZ = 0.0f;
-private:
 	//static //const uint16_t MAX_DEFAULT_ARRAY_SIZE = 10;
 	static const uint16_t MAX_MESHES = 30;
 	//    static //const uint16_t MAX_BUFFER_ARRAY_SIZE = MAX_DEFAULT_ARRAY_SIZE;

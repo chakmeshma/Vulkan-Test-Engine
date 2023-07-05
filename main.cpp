@@ -361,7 +361,7 @@ unsigned __stdcall engineThreadProc(void* data) {
 			if (autoRotationEnabled) engine->cameraRotate();
 			engine->cameraZoom(zoom);
 
-			engine->draw();
+			engine->render();
 		}
 		catch (VulkanException e) {
 			PRINT_ERROR(e.what());

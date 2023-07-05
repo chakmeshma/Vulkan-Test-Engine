@@ -244,7 +244,7 @@ void VulkanEngine::getSupportedDepthFormat() {
 	throw VulkanException("Couldn't find depth stencil supported image format to create with.");
 }
 
-void VulkanEngine::draw() {
+void VulkanEngine::render() {
 	uint32_t drawableImageIndex = acquireNextFramebufferImageIndex();
 	render(drawableImageIndex);
 	present(drawableImageIndex);

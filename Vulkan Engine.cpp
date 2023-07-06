@@ -1072,6 +1072,11 @@ void VulkanEngine::terminate() {
 		std::cout << "Swapchain destroyed successfully." << std::endl;
 	}
 
+	if (surface != VK_NULL_HANDLE) {
+		vkDestroySurfaceKHR(instance, surface, NULL);
+		std::cout << "Surface destroyed successfully." << std::endl;
+	}
+
 	destroySyncMeans();
 
 	if (logicalDevices[0] != VK_NULL_HANDLE) {

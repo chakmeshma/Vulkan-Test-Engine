@@ -372,6 +372,8 @@ private:
 
 	void createAllTextures();
 
+	void createTextureViews();
+
 	void createDescriptorPool();
 
 	void createSyncMeans();

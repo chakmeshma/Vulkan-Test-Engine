@@ -162,6 +162,7 @@ void VulkanEngine::init() {
 	createTransferCommandPool(); // create render commandpool
 	commitBuffers();
 	commitTextures();
+	createTextureViews();
 	destroyStagingMeans();
 	createDescriptorPool(); // create descriptorpool
 	createDescriptorSets();
@@ -268,7 +269,7 @@ void VulkanEngine::createInstance() {
 #ifndef _ENTBUG
 	instanceCreateInfo.enabledLayerCount = 2;
 #else
-	instanceCreateInfo.enabledLayerCount = 0;
+	instanceCreateInfo.enabledLayerCount = 1;
 #endif
 	instanceCreateInfo.ppEnabledExtensionNames = extensionNames.data();
 	instanceCreateInfo.ppEnabledLayerNames = layerNames.data();
@@ -600,7 +601,9 @@ void VulkanEngine::createAllTextures() {
 			vkBindImageMemory(logicalDevices[0], specTextureImagesDevice[meshIndex], uniTexturesMemoryDevice,
 				specTexturesBindOffsetsDevice[meshIndex]));
 	}
+}
 
+void VulkanEngine::createTextureViews() {
 	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {
 		createTextureView(colorTextureViews + meshIndex, colorTextureImagesDevice[meshIndex]);
 		createTextureView(normalTextureViews + meshIndex, normalTextureImagesDevice[meshIndex]);
@@ -3513,6 +3516,86 @@ void VulkanEngine::commitTextures() {
 
 	VKASSERT_SUCCESS(vkDeviceWaitIdle(logicalDevices[0]));
 
+
+	VkCommandBuffer commandBuffer2;
+	commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	commandBufferAllocateInfo.pNext = nullptr;
+	commandBufferAllocateInfo.commandBufferCount = 1;
+	commandBufferAllocateInfo.commandPool = transferCommandPool;
+	commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+
+	VKASSERT_SUCCESS(vkAllocateCommandBuffers(logicalDevices[0], &commandBufferAllocateInfo, &commandBuffer2));
+
+	commandBufferBeginInfo = {};
+	commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	commandBufferBeginInfo.pNext = nullptr;
+	commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	commandBufferBeginInfo.pInheritanceInfo = nullptr;
+
+	VKASSERT_SUCCESS(vkBeginCommandBuffer(commandBuffer2, &commandBufferBeginInfo));
+
+
+	for (uint16_t meshIndex = 0; meshIndex < cachedScene->mNumMeshes; meshIndex++) {
+		for (uint8_t textTypeIndex = 0; textTypeIndex < 3; textTypeIndex++)
+		{
+			VkImage image;
+
+			switch (textTypeIndex) {
+			case 0:
+				image = colorTextureImagesDevice[meshIndex];
+				break;
+			case 1:
+				image = normalTextureImagesDevice[meshIndex];
+				break;
+			case 2:
+				image = specTextureImagesDevice[meshIndex];
+				break;
+			}
+
+			VkImageMemoryBarrier imageMemoryBarrier{
+				VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+				NULL,
+				VK_ACCESS_TRANSFER_WRITE_BIT,
+				VK_ACCESS_SHADER_READ_BIT,
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				transferQueueFamilyIndex,
+				transferQueueFamilyIndex,
+				image
+			};
+
+			imageMemoryBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			imageMemoryBarrier.subresourceRange.baseArrayLayer = 0;
+			imageMemoryBarrier.subresourceRange.baseMipLevel = 0;
+			imageMemoryBarrier.subresourceRange.layerCount = 1;
+			imageMemoryBarrier.subresourceRange.levelCount = 1;
+
+			vkCmdPipelineBarrier(commandBuffer2,
+				VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+				0,
+				0, nullptr,
+				0, nullptr,
+				1, &imageMemoryBarrier);
+		}
+	}
+
+	VKASSERT_SUCCESS(vkEndCommandBuffer(commandBuffer2));
+
+
+	queueSubmit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	queueSubmit.pNext = nullptr;
+	queueSubmit.waitSemaphoreCount = 0;
+	queueSubmit.pWaitSemaphores = nullptr;
+	queueSubmit.pWaitDstStageMask = nullptr;
+	queueSubmit.commandBufferCount = 1;
+	queueSubmit.pCommandBuffers = &commandBuffer2;
+	queueSubmit.signalSemaphoreCount = 0;
+	queueSubmit.pSignalSemaphores = nullptr;
+
+	VKASSERT_SUCCESS(vkQueueSubmit(transferQueue, 1, &queueSubmit, VK_NULL_HANDLE));
+	VKASSERT_SUCCESS(vkDeviceWaitIdle(logicalDevices[0]));
+
+	vkFreeCommandBuffers(logicalDevices[0], transferCommandPool, 1, &commandBuffer2);
 	vkFreeCommandBuffers(logicalDevices[0], transferCommandPool, 1, &commandBuffer);
 }
 

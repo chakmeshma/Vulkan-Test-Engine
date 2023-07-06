@@ -86,6 +86,8 @@ private:
 	void getInstanceExtensions();
 	void getDeviceExtensions();
 	static std::string getVersionString(uint32_t versionBitmask);
+	static uint64 gcd(uint64 a, uint64 b);
+	static uint64 lcm(uint64 a, uint64 b);
 	float cameraRotationValue = 0.0f;
 	float cameraDistance;
 	ViewProjectionMatrices<float> viewProjection = {};

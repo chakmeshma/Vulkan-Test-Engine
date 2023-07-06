@@ -116,6 +116,19 @@ std::string VulkanEngine::getVersionString(uint32_t versionBitmask) {
 	return versionString;
 }
 
+uint64 VulkanEngine::gcd(uint64 a, uint64 b)
+{
+	if (a == 0)
+		return b;
+
+	return gcd(b % a, a);
+}
+
+uint64 VulkanEngine::lcm(uint64 a, uint64 b)
+{
+	return (a / gcd(a, b)) * b;
+}
+
 void VulkanEngine::initDevIL() {
 	ilInit();
 	std::cout << "DevIL library inited." << std::endl;
@@ -1268,6 +1281,13 @@ void VulkanEngine::createAllBuffers() {
 			indexBuffersSizes[meshIndex],
 			VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
+
+		uniformBufferDeviceMemoryRequirements.alignment = lcm(uniformBufferDeviceMemoryRequirements.alignment, deviceProperties.limits.nonCoherentAtomSize);
+		vertexBufferDeviceMemoryRequirements.alignment = lcm(vertexBufferDeviceMemoryRequirements.alignment, deviceProperties.limits.nonCoherentAtomSize);
+		indexBufferDeviceMemoryRequirements.alignment = lcm(indexBufferDeviceMemoryRequirements.alignment, deviceProperties.limits.nonCoherentAtomSize);
+		uniformBufferMemoryRequirements.alignment = lcm(uniformBufferMemoryRequirements.alignment, deviceProperties.limits.nonCoherentAtomSize);
+		vertexBufferMemoryRequirements.alignment = lcm(vertexBufferMemoryRequirements.alignment, deviceProperties.limits.nonCoherentAtomSize);
+		indexBufferMemoryRequirements.alignment = lcm(indexBufferMemoryRequirements.alignment, deviceProperties.limits.nonCoherentAtomSize);
 
 		if (meshIndex == 0) {
 			uniformBufferMemoryOffsetDevice = 0;

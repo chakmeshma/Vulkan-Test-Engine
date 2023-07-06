@@ -1388,7 +1388,7 @@ void VulkanEngine::createAllBuffers() {
 
 		memoryFlushRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 		memoryFlushRange.pNext = nullptr;
-		memoryFlushRange.size = totalUniformBufferSize;
+		memoryFlushRange.size = VK_WHOLE_SIZE;
 		memoryFlushRange.offset = uniformBuffersBindOffsetsDevice[meshIndex];
 		memoryFlushRange.memory = uniBuffersMemory;
 
@@ -1399,7 +1399,7 @@ void VulkanEngine::createAllBuffers() {
 
 		memoryFlushRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 		memoryFlushRange.pNext = nullptr;
-		memoryFlushRange.size = vertexBuffersSizes[meshIndex];
+		memoryFlushRange.size = VK_WHOLE_SIZE;
 		memoryFlushRange.offset = vertexBuffersBindOffsetsDevice[meshIndex];
 		memoryFlushRange.memory = uniBuffersMemory;
 
@@ -1410,7 +1410,7 @@ void VulkanEngine::createAllBuffers() {
 
 		memoryFlushRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 		memoryFlushRange.pNext = nullptr;
-		memoryFlushRange.size = indexBuffersSizes[meshIndex];
+		memoryFlushRange.size = VK_WHOLE_SIZE;
 		memoryFlushRange.offset = indexBuffersBindOffsetsDevice[meshIndex];
 		memoryFlushRange.memory = uniBuffersMemory;
 

@@ -2345,11 +2345,12 @@ void VulkanEngine::present(uint32_t swapchainPresentImageIndex) {
 	VkResult result = vkQueuePresentKHR(graphicsQueue, &presentInfo);
 
 
-	if (result == VK_SUBOPTIMAL_KHR)
+	/*if (result == VK_SUBOPTIMAL_KHR)
 		std::cout
 		<< "Image presentation command successfully submitted to queue, but the swapchain is not longer optimal for the target surface."
 		<< std::endl;
-	else if (result != VK_SUCCESS)
+	else*/
+	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 		throw VulkanException("Failed to present.");
 
 	vkQueueWaitIdle(graphicsQueue);
@@ -2383,7 +2384,7 @@ void VulkanEngine::createRenderpass() {
 	attachments[2].format = surfaceImageFormat;
 	attachments[2].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	attachments[2].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[2].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 	attachments[2].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	attachments[2].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	attachments[2].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;

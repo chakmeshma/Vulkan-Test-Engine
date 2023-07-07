@@ -31,6 +31,7 @@ struct InitConfiguration {
 	bool keepConsoleOpen;
 	bool recompileShaders;
 	bool printLayersAndExtensions;
+	bool validationLayer;
 
 	InitConfiguration(const char* configFileName) {
 		void* iniReader = iniReaderInstantiate(configFileName);
@@ -52,6 +53,7 @@ struct InitConfiguration {
 		keepConsoleOpen = iniReaderGetBool(iniReader, "Misc", "KeepConsoleOpen");
 		recompileShaders = iniReaderGetBool(iniReader, "Misc", "InvalidateShadersCache");
 		printLayersAndExtensions = iniReaderGetBool(iniReader, "Misc", "PrintLayersAndExtensions");
+		validationLayer = iniReaderGetBool(iniReader, "Misc", "ValidationLayer");
 
 		iniReaderDestroy(iniReader);
 	}

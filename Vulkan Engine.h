@@ -409,5 +409,6 @@ private:
 	std::string resourcesPath;
 	bool recompileShaders;
 	bool printLayerAndExtensions;
+	bool validationLayerEnabled;
 };
 

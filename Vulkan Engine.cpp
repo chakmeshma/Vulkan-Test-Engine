@@ -35,6 +35,7 @@ VulkanEngine::VulkanEngine(HINSTANCE hInstance, HWND windowHandle, const InitCon
 	this->zoomSpeed = initConfig->speedZoom;
 	this->recompileShaders = initConfig->recompileShaders;
 	this->printLayerAndExtensions = initConfig->printLayersAndExtensions;
+	this->validationLayerEnabled = initConfig->validationLayer;
 
 	this->hInstance = hInstance;
 	this->windowHandle = windowHandle;
@@ -279,11 +280,9 @@ void VulkanEngine::createInstance() {
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceCreateInfo.pNext = nullptr;
 	instanceCreateInfo.enabledExtensionCount = 2;
-#ifndef _ENTBUG
-	instanceCreateInfo.enabledLayerCount = 2;
-#else
-	instanceCreateInfo.enabledLayerCount = 1;
-#endif
+
+	instanceCreateInfo.enabledLayerCount = (validationLayerEnabled) ? (1) : (0);
+
 	instanceCreateInfo.ppEnabledExtensionNames = extensionNames.data();
 	instanceCreateInfo.ppEnabledLayerNames = layerNames.data();
 	instanceCreateInfo.flags = 0;

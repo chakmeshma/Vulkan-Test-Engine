@@ -352,23 +352,23 @@ void VulkanEngine::createAllTextures() {
 
 		VkMemoryRequirements colorTextureDeviceMemoryRequirement = createTexture(colorTextureImagesDevice + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL);
 		VkMemoryRequirements normalTextureDeviceMemoryRequirement = createTexture(normalTextureImagesDevice + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL);
 		VkMemoryRequirements specTextureDeviceMemoryRequirement = createTexture(specTextureImagesDevice + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL);
 
 		VkMemoryRequirements colorTextureMemoryRequirement = createTexture(colorTextureImages + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR);
 		VkMemoryRequirements normalTextureMemoryRequirement = createTexture(normalTextureImages + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR);
 		VkMemoryRequirements specTextureMemoryRequirement = createTexture(specTextureImages + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR);
 
 		if (meshIndex == 0) {
 			colorTextureMemoryOffsetDevice = 0;
@@ -491,7 +491,7 @@ void VulkanEngine::createAllTextures() {
 		textureImageSubresource.mipLevel = 0;
 		textureImageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-		vkGetImageSubresourceLayout(logicalDevices[0], colorTextureImagesDevice[meshIndex], &textureImageSubresource,
+		vkGetImageSubresourceLayout(logicalDevices[0], colorTextureImages[meshIndex], &textureImageSubresource,
 			&subresourceLayout);
 
 		ILuint imgName = ilGenImage();
@@ -526,7 +526,7 @@ void VulkanEngine::createAllTextures() {
 		textureImageSubresource.mipLevel = 0;
 		textureImageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-		vkGetImageSubresourceLayout(logicalDevices[0], normalTextureImagesDevice[meshIndex], &textureImageSubresource,
+		vkGetImageSubresourceLayout(logicalDevices[0], normalTextureImages[meshIndex], &textureImageSubresource,
 			&subresourceLayout);
 
 		imgName = ilGenImage();
@@ -561,7 +561,7 @@ void VulkanEngine::createAllTextures() {
 		textureImageSubresource.mipLevel = 0;
 		textureImageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-		vkGetImageSubresourceLayout(logicalDevices[0], specTextureImagesDevice[meshIndex], &textureImageSubresource,
+		vkGetImageSubresourceLayout(logicalDevices[0], specTextureImages[meshIndex], &textureImageSubresource,
 			&subresourceLayout);
 
 		imgName = ilGenImage();
@@ -3320,7 +3320,7 @@ VkMemoryRequirements VulkanEngine::createBuffer(VkBuffer* buffer, VkDeviceSize s
 	return uniformBufferMemoryRequirements;
 }
 
-VkMemoryRequirements VulkanEngine::createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags) {
+VkMemoryRequirements VulkanEngine::createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags, VkImageTiling tiling) {
 	VkImageCreateInfo textureImageCreateInfo = {};
 
 	textureImageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -3337,7 +3337,7 @@ VkMemoryRequirements VulkanEngine::createTexture(VkImage* textureImage, VkImageU
 	textureImageCreateInfo.usage = usageFlags;
 	textureImageCreateInfo.mipLevels = 1;
 	textureImageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	textureImageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
+	textureImageCreateInfo.tiling = tiling;
 	textureImageCreateInfo.queueFamilyIndexCount = 0;
 	textureImageCreateInfo.pQueueFamilyIndices = nullptr;
 

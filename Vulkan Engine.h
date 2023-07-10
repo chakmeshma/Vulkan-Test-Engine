@@ -368,7 +368,7 @@ private:
 
 	void getSupportedDepthFormat();
 
-	VkMemoryRequirements createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags, VkImageTiling tiling);
+	VkMemoryRequirements createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags, VkImageTiling tiling, VkImageLayout initialLayout);
 
 	void createTextureView(VkImageView* textureImageView, VkImage textureImage);
 

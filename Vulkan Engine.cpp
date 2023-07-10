@@ -352,23 +352,23 @@ void VulkanEngine::createAllTextures() {
 
 		VkMemoryRequirements colorTextureDeviceMemoryRequirement = createTexture(colorTextureImagesDevice + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL);
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_LAYOUT_UNDEFINED);
 		VkMemoryRequirements normalTextureDeviceMemoryRequirement = createTexture(normalTextureImagesDevice + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL);
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_LAYOUT_UNDEFINED);
 		VkMemoryRequirements specTextureDeviceMemoryRequirement = createTexture(specTextureImagesDevice + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL);
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_LAYOUT_UNDEFINED);
 
 		VkMemoryRequirements colorTextureMemoryRequirement = createTexture(colorTextureImages + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR);
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR, VK_IMAGE_LAYOUT_PREINITIALIZED);
 		VkMemoryRequirements normalTextureMemoryRequirement = createTexture(normalTextureImages + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR);
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR, VK_IMAGE_LAYOUT_PREINITIALIZED);
 		VkMemoryRequirements specTextureMemoryRequirement = createTexture(specTextureImages + meshIndex,
 			VK_IMAGE_USAGE_SAMPLED_BIT |
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR);
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_TILING_LINEAR, VK_IMAGE_LAYOUT_PREINITIALIZED);
 
 		if (meshIndex == 0) {
 			colorTextureMemoryOffsetDevice = 0;
@@ -2768,7 +2768,7 @@ void VulkanEngine::createGraphicsShaderModule(const char* shaderFileName, VkShad
 		std::cout << "Graphics Shader Module created successfully." << std::endl;
 	}
 	else
-		throw VulkanException("Couldn't create vertex graphics shader module.");
+		throw VulkanException("Couldn't create a graphics shader module.");
 
 }
 
@@ -3320,7 +3320,7 @@ VkMemoryRequirements VulkanEngine::createBuffer(VkBuffer* buffer, VkDeviceSize s
 	return uniformBufferMemoryRequirements;
 }
 
-VkMemoryRequirements VulkanEngine::createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags, VkImageTiling tiling) {
+VkMemoryRequirements VulkanEngine::createTexture(VkImage* textureImage, VkImageUsageFlags usageFlags, VkImageTiling tiling, VkImageLayout initialLayout) {
 	VkImageCreateInfo textureImageCreateInfo = {};
 
 	textureImageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -3332,7 +3332,7 @@ VkMemoryRequirements VulkanEngine::createTexture(VkImage* textureImage, VkImageU
 	textureImageCreateInfo.extent.height = textureDim;
 	textureImageCreateInfo.extent.depth = 1;
 	textureImageCreateInfo.arrayLayers = 1;
-	textureImageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	textureImageCreateInfo.initialLayout = initialLayout;
 	textureImageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	textureImageCreateInfo.usage = usageFlags;
 	textureImageCreateInfo.mipLevels = 1;
@@ -3410,7 +3410,7 @@ void VulkanEngine::commitTextures() {
 		imageMemoryBarriers[1].pNext = nullptr;
 		imageMemoryBarriers[1].srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
 		imageMemoryBarriers[1].dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		imageMemoryBarriers[1].oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageMemoryBarriers[1].oldLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 		imageMemoryBarriers[1].newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		imageMemoryBarriers[1].image = colorTextureImages[meshIndex];
 		imageMemoryBarriers[1].subresourceRange.layerCount = 1;
@@ -3440,7 +3440,7 @@ void VulkanEngine::commitTextures() {
 		imageMemoryBarriers[3].pNext = nullptr;
 		imageMemoryBarriers[3].srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
 		imageMemoryBarriers[3].dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		imageMemoryBarriers[3].oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageMemoryBarriers[3].oldLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 		imageMemoryBarriers[3].newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		imageMemoryBarriers[3].image = normalTextureImages[meshIndex];
 		imageMemoryBarriers[3].subresourceRange.layerCount = 1;
@@ -3470,7 +3470,7 @@ void VulkanEngine::commitTextures() {
 		imageMemoryBarriers[5].pNext = nullptr;
 		imageMemoryBarriers[5].srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
 		imageMemoryBarriers[5].dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		imageMemoryBarriers[5].oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageMemoryBarriers[5].oldLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 		imageMemoryBarriers[5].newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		imageMemoryBarriers[5].image = specTextureImages[meshIndex];
 		imageMemoryBarriers[5].subresourceRange.layerCount = 1;

@@ -472,6 +472,8 @@ void VulkanEngine::createAllTextures() {
 
 	VKASSERT_SUCCESS(vkAllocateMemory(logicalDevices[0], &uniMemoryAllocateInfo, nullptr, &uniTexturesMemoryDevice));
 
+	std::cout << uniMemoryAllocateInfo.allocationSize / (1024 * 1024) << " MiB allocated for texture images" << std::endl;
+
 	uniMemoryAllocateInfo.allocationSize = totalRequiredMemorySizeDevice;
 	uniMemoryAllocateInfo.memoryTypeIndex = hostVisibleMemoryTypeIndex;
 

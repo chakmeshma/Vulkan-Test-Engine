@@ -1922,178 +1922,178 @@ void VulkanEngine::createMColorImageAndImageView()
 //	}
 //}
 
-void VulkanEngine::createSparseImage() {
-	sparseImageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	sparseImageCreateInfo.pNext = nullptr;
-	sparseImageCreateInfo.flags = VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT | VK_IMAGE_CREATE_SPARSE_BINDING_BIT;
-	sparseImageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-	sparseImageCreateInfo.format = VK_FORMAT_R32G32B32A32_UINT;
-	sparseImageCreateInfo.extent.width = 4096;
-	sparseImageCreateInfo.extent.height = 4096;
-	sparseImageCreateInfo.extent.depth = 1;
-	sparseImageCreateInfo.arrayLayers = 1;
-	sparseImageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	sparseImageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	sparseImageCreateInfo.usage =
-		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-	sparseImageCreateInfo.mipLevels = imageFormatProperties.maxMipLevels;
-	sparseImageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	sparseImageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	sparseImageCreateInfo.queueFamilyIndexCount = 0;
-	sparseImageCreateInfo.pQueueFamilyIndices = nullptr;
+//void VulkanEngine::createSparseImage() {
+//	sparseImageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+//	sparseImageCreateInfo.pNext = nullptr;
+//	sparseImageCreateInfo.flags = VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT | VK_IMAGE_CREATE_SPARSE_BINDING_BIT;
+//	sparseImageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+//	sparseImageCreateInfo.format = VK_FORMAT_R32G32B32A32_UINT;
+//	sparseImageCreateInfo.extent.width = 4096;
+//	sparseImageCreateInfo.extent.height = 4096;
+//	sparseImageCreateInfo.extent.depth = 1;
+//	sparseImageCreateInfo.arrayLayers = 1;
+//	sparseImageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+//	sparseImageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+//	sparseImageCreateInfo.usage =
+//		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+//	sparseImageCreateInfo.mipLevels = imageFormatProperties.maxMipLevels;
+//	sparseImageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+//	sparseImageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+//	sparseImageCreateInfo.queueFamilyIndexCount = 0;
+//	sparseImageCreateInfo.pQueueFamilyIndices = nullptr;
+//
+//	sparseImages = new VkImage[1];
+//
+//	NULL_HANDLE_INIT_ARRAY(sparseImages, 1);
+//
+//	VkResult result = vkCreateImage(logicalDevices[0], &sparseImageCreateInfo, nullptr, sparseImages);
+//
+//	switch (result) {
+//	case VK_SUCCESS:
+//		std::cout << "Sparse Image (" << 2048 << "x" << 2048
+//			<< ", with different other parameters) created successfully.\n";
+//		break;
+//	default:
+//		throw VulkanException("Sparse Image creation failed.");
+//	}
+//
+//	vkGetImageSparseMemoryRequirements(logicalDevices[0], sparseImages[0], &sparseMemoryRequirementsCount, nullptr);
+//
+//	sparseImageMemoryRequirements = new VkSparseImageMemoryRequirements[sparseMemoryRequirementsCount];
+//
+//	vkGetImageSparseMemoryRequirements(logicalDevices[0], sparseImages[0], &sparseMemoryRequirementsCount,
+//		sparseImageMemoryRequirements);
+//
+//	std::cout << "Sparse Image Memory Requirements:\n";
+//
+//	for (uint32_t i = 0; i < sparseMemoryRequirementsCount; i++) {
+//		VkSparseImageMemoryRequirements sparseImageMemoryRequirementsElement = sparseImageMemoryRequirements[i];
+//
+//		std::string aspectMaskString = "";
+//
+//		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_COLOR_BIT) != 0) {
+//			aspectMaskString += "COLOR_BIT ";
+//		}
+//
+//		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT) != 0) {
+//			aspectMaskString += "DEPTH_BIT ";
+//		}
+//
+//		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_STENCIL_BIT) != 0) {
+//			aspectMaskString += "STENCIL_BIT ";
+//		}
+//
+//		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_METADATA_BIT) != 0) {
+//			aspectMaskString += "METADATA_BIT ";
+//		}
+//
+//		std::cout << "\tApplied to following aspects: " << aspectMaskString << std::endl;
+//
+//		std::cout << "\tImage Granularity Width: "
+//			<< sparseImageMemoryRequirementsElement.formatProperties.imageGranularity.width << std::endl;
+//		std::cout << "\tImage Granularity Height: "
+//			<< sparseImageMemoryRequirementsElement.formatProperties.imageGranularity.height << std::endl;
+//		std::cout << "\tImage Granularity Depth: "
+//			<< sparseImageMemoryRequirementsElement.formatProperties.imageGranularity.depth << std::endl;
+//
+//		std::string flagsString = "";
+//
+//		if ((sparseImageMemoryRequirementsElement.formatProperties.flags & VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT) !=
+//			0) {
+//			flagsString += "SINGLE_MIPTAIL ";
+//		}
+//
+//		if ((sparseImageMemoryRequirementsElement.formatProperties.flags &
+//			VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT) != 0) {
+//			flagsString += "ALIGNED_MIP_SIZE ";
+//		}
+//
+//		if ((sparseImageMemoryRequirementsElement.formatProperties.flags &
+//			VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT) != 0) {
+//			flagsString += "NONSTANDARD_BLOCK_SIZE ";
+//		}
+//
+//		std::cout << "\tFlags: " << flagsString << std::endl;
+//
+//		std::cout << "\tFirst Mip-Tail Level: " << sparseImageMemoryRequirementsElement.imageMipTailFirstLod
+//			<< std::endl;
+//		std::cout << "\tFirst Mip-Tail Size: " << sparseImageMemoryRequirementsElement.imageMipTailSize << std::endl;
+//		std::cout << "\tFirst Mip-Tail Offset (in memory binding region): "
+//			<< sparseImageMemoryRequirementsElement.imageMipTailOffset << std::endl;
+//		std::cout << "\tFirst Mip-Tail Stride (between deviant miptails of array): "
+//			<< sparseImageMemoryRequirementsElement.imageMipTailStride << std::endl;
+//
+//	}
+//}
 
-	sparseImages = new VkImage[1];
-
-	NULL_HANDLE_INIT_ARRAY(sparseImages, 1);
-
-	VkResult result = vkCreateImage(logicalDevices[0], &sparseImageCreateInfo, nullptr, sparseImages);
-
-	switch (result) {
-	case VK_SUCCESS:
-		std::cout << "Sparse Image (" << 2048 << "x" << 2048
-			<< ", with different other parameters) created successfully.\n";
-		break;
-	default:
-		throw VulkanException("Sparse Image creation failed.");
-	}
-
-	vkGetImageSparseMemoryRequirements(logicalDevices[0], sparseImages[0], &sparseMemoryRequirementsCount, nullptr);
-
-	sparseImageMemoryRequirements = new VkSparseImageMemoryRequirements[sparseMemoryRequirementsCount];
-
-	vkGetImageSparseMemoryRequirements(logicalDevices[0], sparseImages[0], &sparseMemoryRequirementsCount,
-		sparseImageMemoryRequirements);
-
-	std::cout << "Sparse Image Memory Requirements:\n";
-
-	for (uint32_t i = 0; i < sparseMemoryRequirementsCount; i++) {
-		VkSparseImageMemoryRequirements sparseImageMemoryRequirementsElement = sparseImageMemoryRequirements[i];
-
-		std::string aspectMaskString = "";
-
-		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_COLOR_BIT) != 0) {
-			aspectMaskString += "COLOR_BIT ";
-		}
-
-		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT) != 0) {
-			aspectMaskString += "DEPTH_BIT ";
-		}
-
-		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_STENCIL_BIT) != 0) {
-			aspectMaskString += "STENCIL_BIT ";
-		}
-
-		if ((sparseImageMemoryRequirementsElement.formatProperties.aspectMask & VK_IMAGE_ASPECT_METADATA_BIT) != 0) {
-			aspectMaskString += "METADATA_BIT ";
-		}
-
-		std::cout << "\tApplied to following aspects: " << aspectMaskString << std::endl;
-
-		std::cout << "\tImage Granularity Width: "
-			<< sparseImageMemoryRequirementsElement.formatProperties.imageGranularity.width << std::endl;
-		std::cout << "\tImage Granularity Height: "
-			<< sparseImageMemoryRequirementsElement.formatProperties.imageGranularity.height << std::endl;
-		std::cout << "\tImage Granularity Depth: "
-			<< sparseImageMemoryRequirementsElement.formatProperties.imageGranularity.depth << std::endl;
-
-		std::string flagsString = "";
-
-		if ((sparseImageMemoryRequirementsElement.formatProperties.flags & VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT) !=
-			0) {
-			flagsString += "SINGLE_MIPTAIL ";
-		}
-
-		if ((sparseImageMemoryRequirementsElement.formatProperties.flags &
-			VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT) != 0) {
-			flagsString += "ALIGNED_MIP_SIZE ";
-		}
-
-		if ((sparseImageMemoryRequirementsElement.formatProperties.flags &
-			VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT) != 0) {
-			flagsString += "NONSTANDARD_BLOCK_SIZE ";
-		}
-
-		std::cout << "\tFlags: " << flagsString << std::endl;
-
-		std::cout << "\tFirst Mip-Tail Level: " << sparseImageMemoryRequirementsElement.imageMipTailFirstLod
-			<< std::endl;
-		std::cout << "\tFirst Mip-Tail Size: " << sparseImageMemoryRequirementsElement.imageMipTailSize << std::endl;
-		std::cout << "\tFirst Mip-Tail Offset (in memory binding region): "
-			<< sparseImageMemoryRequirementsElement.imageMipTailOffset << std::endl;
-		std::cout << "\tFirst Mip-Tail Stride (between deviant miptails of array): "
-			<< sparseImageMemoryRequirementsElement.imageMipTailStride << std::endl;
-
-	}
-}
-
-void VulkanEngine::getPhysicalDeviceSparseImageFormatProperties() {
-	VkImageUsageFlags usageFlags =
-		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-	VkFormat format = VK_FORMAT_R16G16B16A16_UNORM;
-	VkSampleCountFlagBits samplesCount = VK_SAMPLE_COUNT_1_BIT;
-	VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL;
-	VkImageType type = VK_IMAGE_TYPE_2D;
-
-
-	vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevices[0], format, type, samplesCount, usageFlags, tiling,
-		&physicalDeviceSparseImageFormatPropertiesCount, nullptr);
-
-	physicalDeviceSparseImageFormatProperties = new VkSparseImageFormatProperties[physicalDeviceSparseImageFormatPropertiesCount];
-
-	vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevices[0], format, type, samplesCount, usageFlags, tiling,
-		&physicalDeviceSparseImageFormatPropertiesCount,
-		physicalDeviceSparseImageFormatProperties);
-
-	std::cout
-		<< "Physical Device support extent pertaining to sparse image format VK_FORMAT_R16G16B16A16_UNORM(2D) with optimal tiling usable as source and destination of transfer commands, as well as sampling, and allowing image view creation off itself, with one multisampling:\n";
-
-	for (uint32_t i = 0; i < physicalDeviceSparseImageFormatPropertiesCount; i++) {
-
-		std::string aspectMaskString = "";
-
-		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_COLOR_BIT) != 0) {
-			aspectMaskString += "COLOR_BIT ";
-		}
-
-		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT) != 0) {
-			aspectMaskString += "DEPTH_BIT ";
-		}
-
-		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_STENCIL_BIT) != 0) {
-			aspectMaskString += "STENCIL_BIT ";
-		}
-
-		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_METADATA_BIT) != 0) {
-			aspectMaskString += "METADATA_BIT ";
-		}
-
-		std::cout << "\tApplied to following aspects: " << aspectMaskString << std::endl;
-
-		std::cout << "\tImage Granularity Width: "
-			<< physicalDeviceSparseImageFormatProperties[i].imageGranularity.width << std::endl;
-		std::cout << "\tImage Granularity Height: "
-			<< physicalDeviceSparseImageFormatProperties[i].imageGranularity.height << std::endl;
-		std::cout << "\tImage Granularity Depth: "
-			<< physicalDeviceSparseImageFormatProperties[i].imageGranularity.depth << std::endl;
-
-		std::string flagsString = "";
-
-		if ((physicalDeviceSparseImageFormatProperties[i].flags & VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT) != 0) {
-			flagsString += "SINGLE_MIPTAIL ";
-		}
-
-		if ((physicalDeviceSparseImageFormatProperties[i].flags & VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT) != 0) {
-			flagsString += "ALIGNED_MIP_SIZE ";
-		}
-
-		if ((physicalDeviceSparseImageFormatProperties[i].flags & VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT) !=
-			0) {
-			flagsString += "NONSTANDARD_BLOCK_SIZE ";
-		}
-
-		std::cout << "\tFlags: " << flagsString << std::endl;
-	}
-}
+//void VulkanEngine::getPhysicalDeviceSparseImageFormatProperties() {
+//	VkImageUsageFlags usageFlags =
+//		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+//	VkFormat format = VK_FORMAT_R16G16B16A16_UNORM;
+//	VkSampleCountFlagBits samplesCount = VK_SAMPLE_COUNT_1_BIT;
+//	VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL;
+//	VkImageType type = VK_IMAGE_TYPE_2D;
+//
+//
+//	vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevices[0], format, type, samplesCount, usageFlags, tiling,
+//		&physicalDeviceSparseImageFormatPropertiesCount, nullptr);
+//
+//	physicalDeviceSparseImageFormatProperties = new VkSparseImageFormatProperties[physicalDeviceSparseImageFormatPropertiesCount];
+//
+//	vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevices[0], format, type, samplesCount, usageFlags, tiling,
+//		&physicalDeviceSparseImageFormatPropertiesCount,
+//		physicalDeviceSparseImageFormatProperties);
+//
+//	std::cout
+//		<< "Physical Device support extent pertaining to sparse image format VK_FORMAT_R16G16B16A16_UNORM(2D) with optimal tiling usable as source and destination of transfer commands, as well as sampling, and allowing image view creation off itself, with one multisampling:\n";
+//
+//	for (uint32_t i = 0; i < physicalDeviceSparseImageFormatPropertiesCount; i++) {
+//
+//		std::string aspectMaskString = "";
+//
+//		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_COLOR_BIT) != 0) {
+//			aspectMaskString += "COLOR_BIT ";
+//		}
+//
+//		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT) != 0) {
+//			aspectMaskString += "DEPTH_BIT ";
+//		}
+//
+//		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_STENCIL_BIT) != 0) {
+//			aspectMaskString += "STENCIL_BIT ";
+//		}
+//
+//		if ((physicalDeviceSparseImageFormatProperties[i].aspectMask & VK_IMAGE_ASPECT_METADATA_BIT) != 0) {
+//			aspectMaskString += "METADATA_BIT ";
+//		}
+//
+//		std::cout << "\tApplied to following aspects: " << aspectMaskString << std::endl;
+//
+//		std::cout << "\tImage Granularity Width: "
+//			<< physicalDeviceSparseImageFormatProperties[i].imageGranularity.width << std::endl;
+//		std::cout << "\tImage Granularity Height: "
+//			<< physicalDeviceSparseImageFormatProperties[i].imageGranularity.height << std::endl;
+//		std::cout << "\tImage Granularity Depth: "
+//			<< physicalDeviceSparseImageFormatProperties[i].imageGranularity.depth << std::endl;
+//
+//		std::string flagsString = "";
+//
+//		if ((physicalDeviceSparseImageFormatProperties[i].flags & VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT) != 0) {
+//			flagsString += "SINGLE_MIPTAIL ";
+//		}
+//
+//		if ((physicalDeviceSparseImageFormatProperties[i].flags & VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT) != 0) {
+//			flagsString += "ALIGNED_MIP_SIZE ";
+//		}
+//
+//		if ((physicalDeviceSparseImageFormatProperties[i].flags & VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT) !=
+//			0) {
+//			flagsString += "NONSTANDARD_BLOCK_SIZE ";
+//		}
+//
+//		std::cout << "\tFlags: " << flagsString << std::endl;
+//	}
+//}
 
 void VulkanEngine::getQueues() {
 	vkGetDeviceQueue(logicalDevices[0], graphicsQueueFamilyIndex, 0, &graphicsQueue);

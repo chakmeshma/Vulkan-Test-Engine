@@ -159,12 +159,12 @@ private:
 	VkDeviceSize memoryCommittedBytesCount = 0;
 	VkMappedMemoryRange memoryFlushRange = {};
 	VkMemoryRequirements imageMemoryRequirements = {};
-	VkImage* sparseImages;
-	VkSparseImageMemoryRequirements* sparseImageMemoryRequirements;
-	uint32_t sparseMemoryRequirementsCount = 0;
-	VkImageCreateInfo sparseImageCreateInfo = {};
-	VkSparseImageFormatProperties* physicalDeviceSparseImageFormatProperties;
-	uint32_t physicalDeviceSparseImageFormatPropertiesCount = 0;
+	//VkImage* sparseImages;
+	//VkSparseImageMemoryRequirements* sparseImageMemoryRequirements;
+	//uint32_t sparseMemoryRequirementsCount = 0;
+	//VkImageCreateInfo sparseImageCreateInfo = {};
+	//VkSparseImageFormatProperties* physicalDeviceSparseImageFormatProperties;
+	//uint32_t physicalDeviceSparseImageFormatPropertiesCount = 0;
 	VkQueue graphicsQueue = VK_NULL_HANDLE;
 	VkQueue transferQueue = VK_NULL_HANDLE;
 	HINSTANCE hInstance;
@@ -289,7 +289,7 @@ private:
 
 	//    void getPhysicalDeviceImageFormatProperties(VkFormat imageFormat);
 
-	void getPhysicalDeviceSparseImageFormatProperties();
+	//void getPhysicalDeviceSparseImageFormatProperties();
 
 	void createAllBuffers();
 
@@ -297,7 +297,7 @@ private:
 
 	void createMColorImageAndImageView();
 
-	void createSparseImage();
+	//void createSparseImage();
 
 	//void allocateDeviceMemories();
 	//void bindBufferMemories();

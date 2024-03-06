@@ -40,8 +40,8 @@
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>D:\Vulkan Deps and Samples\shaderc Build\libshaderc\Debug;D:\Vulkan Deps and Samples\DevIL Build\lib\x64\Debug;D:\Vulkan Deps and Samples\assimp Build\lib\Debug;C:\VulkanSDK\1.3.268.0\Lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\Vulkan Deps and Samples\shaderc\libshaderc\include;D:\Vulkan Deps and Samples\DevIL\DevIL\include;D:\Vulkan Deps and Samples\assimp\include;D:\Vulkan Deps and Samples\assimp Build\include;C:\VulkanSDK\1.3.268.0\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\chakm\Desktop\Vulkan Stuff\shaderc-build\libshaderc\Debug;C:\Users\chakm\Desktop\Vulkan Stuff\DevIL-Build\lib\x64\Debug;C:\Users\chakm\Desktop\Vulkan Stuff\assimp-build\lib\Debug;C:\VulkanSDK\1.3.275.0\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Vulkan Deps and Samples\shaderc\libshaderc\include;C:\Users\chakm\Desktop\Vulkan Stuff\DevIL\DevIL\include;C:\Users\chakm\Desktop\Vulkan Stuff\assimp\include;C:\Users\chakm\Desktop\Vulkan Stuff\assimp-build\include;C:\VulkanSDK\1.3.275.0\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>C:\Users\chakm\Desktop\shaderc-build\libshaderc\Release;C:\Users\chakm\Desktop\DevIL-build\lib\x64\Release;C:\VulkanSDK\1.0.65.0\Lib;C:\Users\chakm\Desktop\assimp-build\code\Release;$(LibraryPath)</LibraryPath>

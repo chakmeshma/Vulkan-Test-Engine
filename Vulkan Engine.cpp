@@ -1223,8 +1223,8 @@ void VulkanEngine::createLogicalDevice() {
 		throw VulkanException("Logical Device creation failed.\n");
 	}
 
-	delete transferQueuePriorities;
-	delete graphicsQueuePriorities;
+	delete[] transferQueuePriorities;
+	delete[] graphicsQueuePriorities;
 }
 
 void VulkanEngine::createAllBuffers() {

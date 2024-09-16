@@ -40,12 +40,12 @@
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc\libshaderc\include;C:\VulkanSDK\1.3.290.0\Include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL\DevIL\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-5.4.2\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-5.4.2-build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc-build\libshaderc\Debug;C:\VulkanSDK\1.3.290.0\Lib;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL-build\lib\x64\Debug;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-5.4.2-build\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc\libshaderc\include;C:\VulkanSDK\1.3.290.0\Include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL\DevIL\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc-build\libshaderc\Debug;C:\VulkanSDK\1.3.290.0\Lib;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL-build\lib\x64\Debug;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-build\lib\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc\libshaderc\include;C:\VulkanSDK\1.3.290.0\Include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL\DevIL\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-5.4.2\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-5.4.2-build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc-build\libshaderc\Release;C:\VulkanSDK\1.3.290.0\Lib;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL-build\lib\x64\Release;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-5.4.2-build\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc\libshaderc\include;C:\VulkanSDK\1.3.290.0\Include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL\DevIL\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp\include;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\shaderc-build\libshaderc\Release;C:\VulkanSDK\1.3.290.0\Lib;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\DevIL-build\lib\x64\Release;C:\Users\chakm\OneDrive\Desktop\Vulkan Stuff\assimp-build\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
